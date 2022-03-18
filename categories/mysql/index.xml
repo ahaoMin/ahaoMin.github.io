@@ -11,7 +11,7 @@
         <pubDate>Mon, 28 Jun 2021 13:36:41 +0000</pubDate>
         
         <guid>https://ahao.ink/posts/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E7%B4%A2%E5%BC%95/</guid>
-        <description>&lt;img src="https://ahao.ink/4.png" alt="Featured image of post 深入浅出索引" /&gt;&lt;h1 id=&#34;索引&#34;&gt;索引&lt;/h1&gt;
+        <description>&lt;img src="https://ahao.ink/4.jpg" alt="Featured image of post 深入浅出索引" /&gt;&lt;h1 id=&#34;索引&#34;&gt;索引&lt;/h1&gt;
 &lt;p&gt;提到数据库索引，大家都不陌生。比如某一个SQL查询比较慢，分析完原因之后，你可能就会说“给某个字段加个索引吧”之类的解决方案。但到底什么是索引，索引又是如何工作的呢？&lt;/p&gt;
 &lt;p&gt;一句话简单来说，&lt;strong&gt;索引的出现其实就是为了提高数据查询的效率，就像书的目录一样&lt;/strong&gt;。一本500页的书，如果你想快速找到其中的某一个知识点，在不借助目录的情况下，那我估计你可得找一会儿。同样，对于数据库的表而言，索引其实就是它的“目录”。&lt;/p&gt;
 &lt;h2 id=&#34;索引的常见模型&#34;&gt;索引的常见模型&lt;/h2&gt;
@@ -428,7 +428,7 @@
         <pubDate>Sun, 20 Jun 2021 13:36:41 +0000</pubDate>
         
         <guid>https://ahao.ink/posts/%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F%E4%B8%80%E6%9D%A1sql%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/</guid>
-        <description>&lt;img src="https://ahao.ink/22.png" alt="Featured image of post 日志系统：一条SQL更新语句是如何执行的？" /&gt;&lt;p&gt;一条更新语句的执行流程是怎样的呢？&lt;/p&gt;
+        <description>&lt;img src="https://ahao.ink/22.jpg" alt="Featured image of post 日志系统：一条SQL更新语句是如何执行的？" /&gt;&lt;p&gt;一条更新语句的执行流程是怎样的呢？&lt;/p&gt;
 &lt;p&gt;之前你可能经常听 DBA 同事说，MySQL 可以恢复到半个月内任意一秒的状态，惊叹的同时，你是不是心中也会不免会好奇，这是怎样做到的呢？&lt;/p&gt;
 &lt;p&gt;我们还是从一个表的一条更新语句说起，下面是这个表的创建语句，这个表有一个主键 ID 和一个整型字段 c：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;

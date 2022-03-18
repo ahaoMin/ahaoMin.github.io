@@ -68,7 +68,7 @@
         <pubDate>Thu, 08 Apr 2021 13:36:41 +0000</pubDate>
         
         <guid>https://ahao.ink/posts/spring-di/</guid>
-        <description>&lt;img src="https://ahao.ink/29.png" alt="Featured image of post Spring DI" /&gt;&lt;h1 id=&#34;spring-di依赖注入之xml配置&#34;&gt;Spring DI（依赖注入）之XML配置&lt;/h1&gt;
+        <description>&lt;img src="https://ahao.ink/29.jpg" alt="Featured image of post Spring DI" /&gt;&lt;h1 id=&#34;spring-di依赖注入之xml配置&#34;&gt;Spring DI（依赖注入）之XML配置&lt;/h1&gt;
 &lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
 &lt;p&gt;在Spring控制反转，我们详细讲解了 控制反转，也就是对 bean 做实例化的部分。而我们知道 ，Spring 的核心功能是两个：控制反转 和 依赖注入。&lt;/p&gt;
 &lt;p&gt;那么控制反转我们已经讲过，而依赖注入是什么呢？&lt;/p&gt;

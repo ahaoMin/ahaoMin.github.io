@@ -3968,7 +3968,7 @@
         <pubDate>Sun, 26 Sep 2021 13:36:41 +0000</pubDate>
         
         <guid>https://ahao.ink/posts/redis%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/</guid>
-        <description>&lt;img src="https://ahao.ink/27.png" alt="Featured image of post Redis是如何执行的" /&gt;&lt;h1 id=&#34;命令执行流程&#34;&gt;命令执行流程&lt;/h1&gt;
+        <description>&lt;img src="https://ahao.ink/27.jpg" alt="Featured image of post Redis是如何执行的" /&gt;&lt;h1 id=&#34;命令执行流程&#34;&gt;命令执行流程&lt;/h1&gt;
 &lt;p&gt;一条命令的执行过程有很多细节，但大体可分为：客户端先将用户输入的命令，转化为 Redis 相关的通讯协议，再用 socket 连接的方式将内容发送给服务器端，服务器端在接收到相关内容之后，先将内容转化为具体的执行命令，再判断用户授权信息和其他相关信息，当验证通过之后会执行最终命令，命令执行完之后，会进行相关的信息记录和数据统计，然后再把执行结果发送给客户端，这样一条命令的执行流程就结束了。如果是集群模式的话，主节点还会将命令同步至子节点，下面我们一起来看更加具体的执行流程。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://s2.loli.net/2021/12/04/TsfHU7mId51bX8v.png&#34;
 	
@@ -4078,7 +4078,7 @@
         <pubDate>Sun, 26 Sep 2021 13:36:41 +0000</pubDate>
         
         <guid>https://ahao.ink/posts/redis%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB%E5%92%8C%E7%9B%B8%E5%85%B3%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</guid>
-        <description>&lt;img src="https://ahao.ink/25.png" alt="Featured image of post Redis问题汇总和相关解决方案" /&gt;&lt;p&gt;本文收集了一些 Redis 使用中经常遇到的一些问题，和与之相对应的解决方案。&lt;/p&gt;
+        <description>&lt;img src="https://ahao.ink/25.jpg" alt="Featured image of post Redis问题汇总和相关解决方案" /&gt;&lt;p&gt;本文收集了一些 Redis 使用中经常遇到的一些问题，和与之相对应的解决方案。&lt;/p&gt;
 &lt;h1 id=&#34;缓存雪崩&#34;&gt;缓存雪崩&lt;/h1&gt;
 &lt;p&gt;缓存雪崩是指在短时间内，有大量缓存同时过期，导致大量的请求直接查询数据库，从而对数据库造成了巨大的压力，严重情况下可能会导致数据库宕机的情况叫做缓存雪崩。&lt;/p&gt;
 &lt;p&gt;我们先来看下正常情况下和缓存雪崩时程序的执行流程图，正常情况下系统的执行流程如下图所示：&lt;/p&gt;

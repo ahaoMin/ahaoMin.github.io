@@ -12,7 +12,7 @@
         <pubDate>Sat, 05 Feb 2022 13:36:41 +0000</pubDate>
         
         <guid>https://ahao.ink/posts/hugo-%E5%8D%9A%E5%AE%A2%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/</guid>
-        <description>&lt;img src="https://ahao.ink/11.png" alt="Featured image of post Hugo 博客自动部署" /&gt;&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+        <description>&lt;img src="https://ahao.ink/11.jpg" alt="Featured image of post Hugo 博客自动部署" /&gt;&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
 &lt;p&gt;博客已经搭建完成了，如果要更新岂不是每次都要编译再上传，这就很麻烦，接下来利用 GitHub Actions 来自动部署静态博客。&lt;/p&gt;
 &lt;h2 id=&#34;github-actions&#34;&gt;GitHub Actions&lt;/h2&gt;
 &lt;p&gt;虽然是静态博客，但配合 GitHub Actions 这种 Serverless 的服务也可以让静态博客的更新变得稍微方便一些。原有的静态博客的更新流程，是在文章写好之后，在本地机器上编译成静态的 HTML 文件，再 push 到 GitHub Pages 的仓库里。这样需要在写文章之后至少本地跑一次 Hugo。而利用 GitHub Actions，这一次“跑 Hugo”的过程可以挪到远端进行，并且自动触发。&lt;/p&gt;
