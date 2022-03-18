@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Spring DI（依赖注入）之XML配置 前言 在Spring控制反转，我们详细讲解了 控制反转，也就是对 bean 做实例化的部分。而我们知道 ，Spring 的核心功能是两个：控制反转 和 依赖注入。
+那么控制反转我们已经讲过，而依赖注入是什么呢？
+依赖注入案例 概念介绍 知识回顾
+对于依赖注入，我们在第一章第一节已经介绍过，我们回顾一下
+概念解释
+上面是我们之前对于依赖注入的一个通俗解释。那么这里再着重强调一下 IOC 控制反转与 DI 依赖注入的关系：
+IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的作用是降低了程序的耦合，不需要我们手动的创建对象，但是程序的耦合性还是存在。
+对象中肯定会有一些其余对象的引用，那么这种引用就称呼为对象的依赖，而 DI 依赖注入其实 是 IOC 设计思想的一种表现形式。
+对于 这种属性依赖，我们无需手动赋予，也是讲赋值的动作交给 Spring ，那么这种操作就是 依赖注入。
+依赖注入方式：
+ 第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。  那么，本章节先带大家体验下 xml 方式实现依赖注入。
+工程实现 搭建动作介绍
+ 创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件  创建工程 导入依赖 省略
+可以参考之前创建过的IoC工程'><title>Spring DI</title>
+
+<link rel='canonical' href='https://ahao.ink/posts/spring-di/'>
+
+<link rel="stylesheet" href="/scss/style.min.baba905ab2d1209de74a1930c487a8a663c37860af6aa1c26588d298bf620306.css"><meta property='og:title' content='Spring DI'>
+<meta property='og:description' content='Spring DI（依赖注入）之XML配置 前言 在Spring控制反转，我们详细讲解了 控制反转，也就是对 bean 做实例化的部分。而我们知道 ，Spring 的核心功能是两个：控制反转 和 依赖注入。
+那么控制反转我们已经讲过，而依赖注入是什么呢？
+依赖注入案例 概念介绍 知识回顾
+对于依赖注入，我们在第一章第一节已经介绍过，我们回顾一下
+概念解释
+上面是我们之前对于依赖注入的一个通俗解释。那么这里再着重强调一下 IOC 控制反转与 DI 依赖注入的关系：
+IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的作用是降低了程序的耦合，不需要我们手动的创建对象，但是程序的耦合性还是存在。
+对象中肯定会有一些其余对象的引用，那么这种引用就称呼为对象的依赖，而 DI 依赖注入其实 是 IOC 设计思想的一种表现形式。
+对于 这种属性依赖，我们无需手动赋予，也是讲赋值的动作交给 Spring ，那么这种操作就是 依赖注入。
+依赖注入方式：
+ 第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。  那么，本章节先带大家体验下 xml 方式实现依赖注入。
+工程实现 搭建动作介绍
+ 创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件  创建工程 导入依赖 省略
+可以参考之前创建过的IoC工程'>
+<meta property='og:url' content='https://ahao.ink/posts/spring-di/'>
+<meta property='og:site_name' content='ahao&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-04-08T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-17T12:01:24&#43;08:00'/><meta property='og:image' content='https://ahao.ink/29.png' />
+<meta name="twitter:title" content="Spring DI">
+<meta name="twitter:description" content="Spring DI（依赖注入）之XML配置 前言 在Spring控制反转，我们详细讲解了 控制反转，也就是对 bean 做实例化的部分。而我们知道 ，Spring 的核心功能是两个：控制反转 和 依赖注入。
+那么控制反转我们已经讲过，而依赖注入是什么呢？
+依赖注入案例 概念介绍 知识回顾
+对于依赖注入，我们在第一章第一节已经介绍过，我们回顾一下
+概念解释
+上面是我们之前对于依赖注入的一个通俗解释。那么这里再着重强调一下 IOC 控制反转与 DI 依赖注入的关系：
+IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的作用是降低了程序的耦合，不需要我们手动的创建对象，但是程序的耦合性还是存在。
+对象中肯定会有一些其余对象的引用，那么这种引用就称呼为对象的依赖，而 DI 依赖注入其实 是 IOC 设计思想的一种表现形式。
+对于 这种属性依赖，我们无需手动赋予，也是讲赋值的动作交给 Spring ，那么这种操作就是 依赖注入。
+依赖注入方式：
+ 第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。  那么，本章节先带大家体验下 xml 方式实现依赖注入。
+工程实现 搭建动作介绍
+ 创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件  创建工程 导入依赖 省略
+可以参考之前创建过的IoC工程"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ahao.ink/29.png' />
+    <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐷</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ahao&#39;s Blog</a></h1>
+            <h2 class="site-description">道阻且长，行则将至</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页 / Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档 / Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索 / Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于 / About</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/posts/spring-di/">
+                
+                    <img src="/29.png" loading="lazy" alt="Featured image of post Spring DI" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/spring/" >
+                Spring
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/spring-di/">Spring DI</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2021年4月8日</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="spring-di依赖注入之xml配置">Spring DI（依赖注入）之XML配置</h1>
+<h2 id="前言">前言</h2>
+<p>在Spring控制反转，我们详细讲解了 控制反转，也就是对 bean 做实例化的部分。而我们知道 ，Spring 的核心功能是两个：控制反转 和 依赖注入。</p>
+<p>那么控制反转我们已经讲过，而依赖注入是什么呢？</p>
+<h2 id="依赖注入案例">依赖注入案例</h2>
+<h4 id="概念介绍">概念介绍</h4>
+<p><strong>知识回顾</strong></p>
+<p>对于依赖注入，我们在第一章第一节已经介绍过，我们回顾一下</p>
+<p><img src="https://s2.loli.net/2021/12/24/a3eXTCls7pO98ih.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+></p>
+<p><strong>概念解释</strong></p>
+<p>上面是我们之前对于依赖注入的一个通俗解释。那么这里再着重强调一下 <strong>IOC</strong> 控制反转与 <strong>DI</strong> 依赖注入的关系：</p>
+<p>IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的作用是降低了程序的耦合，不需要我们手动的创建对象，但是程序的耦合性还是存在。</p>
+<p>对象中肯定会有一些其余对象的引用，那么这种引用就称呼为对象的依赖，而 DI 依赖注入其实 是 IOC 设计思想的一种表现形式。</p>
+<p>对于 这种属性依赖，我们无需手动赋予，也是讲赋值的动作交给 Spring ，那么这种操作就是 <strong>依赖注入</strong>。</p>
+<p><strong>依赖注入方式</strong>：</p>
+<ul>
+<li>第一种方式是通过 xml 配置的方式实现；</li>
+<li>第二种方式是在属性或者方法上使用注解的方式实现。</li>
+</ul>
+<p>那么，本章节先带大家体验下 xml 方式实现依赖注入。</p>
+<h4 id="工程实现">工程实现</h4>
+<p><strong>搭建动作介绍</strong></p>
+<ol>
+<li>创建一个 maven 工程</li>
+<li>导入Spring 使用的依赖</li>
+<li>编写业务层的 Service 和持久层的 Dao java 类</li>
+<li>编写 Spring 的配置文件</li>
+</ol>
+<p><strong>创建工程 导入依赖 省略</strong></p>
+<p>可以参考之前创建过的IoC工程</p>
+<p><strong>java 代码</strong></p>
+<p>创建 Servcie 的接口和接口的实现类，代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//接口代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserService</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deleteById</span><span class="o">(</span><span class="n">Integer</span> <span class="n">id</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//实现类代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserServiceImpl</span> <span class="kd">implements</span> <span class="n">UserService</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">UserDao</span> <span class="n">userDao</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">UserDao</span> <span class="nf">getUserDao</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">userDao</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUserDao</span><span class="o">(</span><span class="n">UserDao</span> <span class="n">userDao</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="o">.</span><span class="na">userDao</span> <span class="o">=</span> <span class="n">userDao</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deleteById</span><span class="o">(</span><span class="n">Integer</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;删除的方法执行&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>UserDao 接口和实现类代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//dao接口代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserDao</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//dao实现类代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserDaoImpl</span> <span class="kd">implements</span> <span class="n">UserDao</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>代码解释： dao的接口和实现类中并没有方法，只是为了测试 作为service中的属性依赖，可以实现由 Spring 完成动态注入。</p>
+<p><strong>重点来了：spring 的核心配置文件：</strong></p>
+<p><img src="http://img.mukewang.com/wiki/5e9959bd0918bd3810610534.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+></p>
+<p>配置解释：</p>
+<p>在上面的配置文件中：</p>
+<ul>
+<li>bean 标签是描述一个被实例化的类 而 property 则表示一类中的属性</li>
+<li>property 标签中的属性 name 一般我们写成类中的属性名称， 实际上，起决定作用的并不是属性名，下面示例再展示</li>
+<li>ref 表示当前的属性 是一个引用对象，而引用的是谁呢？ ref 中的值 必须是在容器中已经实例化的一个引用对象的唯一标识。</li>
+<li>value 当前的属性可以直接赋值，所以通过 value 中，填写要赋予的数值即可</li>
+</ul>
+<p><strong>测试结果</strong></p>
+<p><img src="http://img.mukewang.com/wiki/5e9959ff09fc348a12380755.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+></p>
+<p><strong>代码解释</strong></p>
+<p>可以看到 我们得到了 service 中的类属性 Userdao 的实例，并且也 得到了 字符串属性 userName的值 zs</p>
+<h4 id="property注入属性的解释">property注入属性的解释</h4>
+<p>刚刚我们在上面的示例中 展示了xml依赖属性的注入，也是比较好理解。</p>
+<p>这里我们强调一下使用的注意事项：</p>
+<p>如果是 property 属性标签实现属性注入，那么类中必须由配置在 property 标签中 name 属性的 set 方法</p>
+<p>下面我们测试一下set方法的改变：</p>
+<p><strong>先讲 service 中 dao 的 set 方法改造如下：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">setDao</span><span class="o">(</span><span class="n">UserDao</span> <span class="n">userDao</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;执行了set方法 给dao属性赋值&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="na">userDao</span> <span class="o">=</span> <span class="n">userDao</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这时候代码中的set方法变成了 setDao 配置文件不变，依然是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;userDao&#34;</span> <span class="na">ref=</span><span class="s">&#34;userDao&#34;</span><span class="nt">&gt;&lt;/property&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们看看会产生什么问题</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Caused</span> <span class="n">by</span><span class="o">:</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">NotWritablePropertyException</span><span class="o">:</span> <span class="n">Invalid</span> <span class="n">property</span> <span class="err">&#39;</span><span class="n">userDao</span><span class="err">&#39;</span> <span class="n">of</span> <span class="n">bean</span> <span class="kd">class</span> <span class="err">[</span><span class="nc">com</span><span class="o">.</span><span class="na">wyan</span><span class="o">.</span><span class="na">service</span><span class="o">.</span><span class="na">UserServiceImpl</span><span class="o">]:</span> <span class="n">Bean</span> <span class="n">property</span> <span class="err">&#39;</span><span class="n">userDao</span><span class="err">&#39;</span> <span class="n">is</span> <span class="n">not</span> <span class="n">writable</span> <span class="n">or</span> <span class="n">has</span> <span class="n">an</span> <span class="n">invalid</span> <span class="n">setter</span> <span class="n">method</span><span class="o">.</span> <span class="n">Does</span> <span class="n">the</span> <span class="n">parameter</span> <span class="n">type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">setter</span> <span class="n">match</span> <span class="n">the</span> <span class="k">return</span> <span class="n">type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">getter</span><span class="o">?</span>
+</span></span><span class="line"><span class="cl">	<span class="n">at</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">BeanWrapperImpl</span><span class="o">.</span><span class="na">createNotWritablePropertyException</span><span class="o">(</span><span class="n">BeanWrapperImpl</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="n">247</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">at</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">AbstractNestablePropertyAccessor</span><span class="o">.</span><span class="na">processLocalProperty</span><span class="o">(</span><span class="n">AbstractNestablePropertyAccessor</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="n">426</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">at</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">AbstractNestablePropertyAccessor</span><span class="o">.</span><span class="na">setPropertyValue</span><span class="o">(</span><span class="n">AbstractNestablePropertyAccessor</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="n">278</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">at</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">AbstractNestablePropertyAccessor</span><span class="o">.</span><span class="na">setPropertyValue</span><span class="o">(</span><span class="n">AbstractNestablePropertyAccessor</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="n">266</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">at</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">AbstractPropertyAccessor</span><span class="o">.</span><span class="na">setPropertyValues</span><span class="o">(</span><span class="n">AbstractPropertyAccessor</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="n">97</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">at</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">AbstractPropertyAccessor</span><span class="o">.</span><span class="na">setPropertyValues</span><span class="o">(</span><span class="n">AbstractPropertyAccessor</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="n">77</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">at</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">factory</span><span class="o">.</span><span class="na">support</span><span class="o">.</span><span class="na">AbstractAutowireCapableBeanFactory</span><span class="o">.</span><span class="na">applyPropertyValues</span><span class="o">(</span><span class="n">AbstractAutowireCapableBeanFactory</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="n">1646</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到异常的堆栈信息 无效的 userDao 属性， userDao 不可以 或者 没有有效的 setter 方法提供。</p>
+<p><strong>更改xml文件中的 property 标签的 name 属性 为 dao</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&#34;dao&#34;</span> <span class="na">ref=</span><span class="s">&#34;userDao&#34;</span><span class="nt">&gt;&lt;/property&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>测试结果如下：</p>
+<p><img src="http://img.mukewang.com/wiki/5e995b9709af36a611160354.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+>
+所以我们说 property 中的 name 属性不一定要跟 Java类中的属性名保持一致 而是必须跟 setter 方法的名称一致</p>
+<h2 id="总结">总结：</h2>
+<p>本章节重点依赖注入的 xml 实现</p>
+<ol>
+<li>依赖注入 实际上是 IOC 设计思想的一种具体实现</li>
+<li>依赖注入 可以通过 xml 配置实现 ，可以通过注解实现</li>
+<li>xml 的依赖注入 是依托于类中的 set 方法实现的。</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 2022年3月17日 12:01 CST
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-contents--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-contents">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-aop/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/30.jpg" loading="lazy" data-key="" data-hash="/30.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring AOP</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-ioc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/31.jpg" loading="lazy" data-key="" data-hash="/31.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring IoC</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-mvc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/32.jpg" loading="lazy" data-key="" data-hash="/32.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring MVC</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-%E5%85%A5%E9%97%A8/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/28.jpg" loading="lazy" data-key="" data-hash="/28.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring 入门</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+<div id="waline" class="waline-container"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+    .waline-container .vcount {
+        color: var(--card-text-color-main);
+    }
+</style><script>
+    
+    new Waline({"dark":"html[data-scheme=\"dark\"]","el":"#waline","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili","https://cdn.jsdelivr.net/gh/walinejs/emojis/qq","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus"],"lang":"zh-CN","locale":{"admin":"Admin"},"requiredMeta":["name","email","url"],"serverURL":"https://blog-api-2w7xkqg6y-ahaomin.vercel.app/","visitor":true});
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ahao&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.10.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#依赖注入案例">依赖注入案例</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#概念介绍">概念介绍</a></li>
+            <li><a href="#工程实现">工程实现</a></li>
+            <li><a href="#property注入属性的解释">property注入属性的解释</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结：</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

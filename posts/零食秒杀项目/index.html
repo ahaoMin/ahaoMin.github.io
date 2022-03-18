@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='项目架构 后端项目部署在应用服务器上，这里用的是Tomcat
+数据层用的Mybatis框架用来进行数据访问
+视图层用的SpringMVC
+Spring 对整个Bean进行管理，Controller解析前端请求数据，完成取数据，业务层将数据返回给Controller，ViewResolve需要得到Controller传输的Model数据进行处理，最终返回JSON给前端
+前端静态资源部署在Nginx服务器上
+具体访问步骤：例如当浏览器访问某个商品的详情页，输入地址/item/detail/101发出了请求，首先请求到了Nginx服务器，Nginx将需要的静态资源等返回给浏览器，拿到item.html，看到图片文字等静态资源，如何跟服务端通信得到动态数据呢？这就需要Ajax发送异步请求给视图层，Controller调用业务层再调用数据层得到数据，经过加工返回给Controller，Controller将数据传给ViewResolver，最后ViewResolver将JSON数据传送给Ajax，Ajax回调函数接收到JSON数据渲染到页面。
+数据库设计 设计如下几张表
+用户表user_info：包括用户id，电话，密码，昵称，性别，年龄
+商品表item：包括商品id，商品名，商品价格，已售卖，图片，描述
+商品库存表item_stock：id，商品id，库存数
+活动表promotion：id，名称，开始时间，结束时间，商品id，活动价格
+订单详情表order_info：id，用户id，商品id，活动id，下单价格，下单数量，下单总数，下单时间
+项目结构 后端结构 项目结构如下：
+common包：放一些公共类。业务异常类、错误编码接口、给浏览器返回数据模板、工具类。
+BusinessException: 公共的业务异常类，当程序中发生异常，统一通过该类向外抛出异常
+component包：需要spring管理的公共对象
+configuration包：存放配置类
+controller包：controller层代码
+dao包：数据访问层
+service包：存放业务层
+entity包：存放实体类
+前端结构 项目部署 后端部署 打包项目(跳过所写的测试代码)：
+1  mvn clean package -Dmaven.test.skip=true   写一个start.sh文件来启动项目：
+1 2 3  pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp;   赋予start.'><title>零食秒杀项目</title>
+
+<link rel='canonical' href='https://ahao.ink/posts/%E9%9B%B6%E9%A3%9F%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE/'>
+
+<link rel="stylesheet" href="/scss/style.min.baba905ab2d1209de74a1930c487a8a663c37860af6aa1c26588d298bf620306.css"><meta property='og:title' content='零食秒杀项目'>
+<meta property='og:description' content='项目架构 后端项目部署在应用服务器上，这里用的是Tomcat
+数据层用的Mybatis框架用来进行数据访问
+视图层用的SpringMVC
+Spring 对整个Bean进行管理，Controller解析前端请求数据，完成取数据，业务层将数据返回给Controller，ViewResolve需要得到Controller传输的Model数据进行处理，最终返回JSON给前端
+前端静态资源部署在Nginx服务器上
+具体访问步骤：例如当浏览器访问某个商品的详情页，输入地址/item/detail/101发出了请求，首先请求到了Nginx服务器，Nginx将需要的静态资源等返回给浏览器，拿到item.html，看到图片文字等静态资源，如何跟服务端通信得到动态数据呢？这就需要Ajax发送异步请求给视图层，Controller调用业务层再调用数据层得到数据，经过加工返回给Controller，Controller将数据传给ViewResolver，最后ViewResolver将JSON数据传送给Ajax，Ajax回调函数接收到JSON数据渲染到页面。
+数据库设计 设计如下几张表
+用户表user_info：包括用户id，电话，密码，昵称，性别，年龄
+商品表item：包括商品id，商品名，商品价格，已售卖，图片，描述
+商品库存表item_stock：id，商品id，库存数
+活动表promotion：id，名称，开始时间，结束时间，商品id，活动价格
+订单详情表order_info：id，用户id，商品id，活动id，下单价格，下单数量，下单总数，下单时间
+项目结构 后端结构 项目结构如下：
+common包：放一些公共类。业务异常类、错误编码接口、给浏览器返回数据模板、工具类。
+BusinessException: 公共的业务异常类，当程序中发生异常，统一通过该类向外抛出异常
+component包：需要spring管理的公共对象
+configuration包：存放配置类
+controller包：controller层代码
+dao包：数据访问层
+service包：存放业务层
+entity包：存放实体类
+前端结构 项目部署 后端部署 打包项目(跳过所写的测试代码)：
+1  mvn clean package -Dmaven.test.skip=true   写一个start.sh文件来启动项目：
+1 2 3  pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp;   赋予start.'>
+<meta property='og:url' content='https://ahao.ink/posts/%E9%9B%B6%E9%A3%9F%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE/'>
+<meta property='og:site_name' content='ahao&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-03-08T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-17T12:54:29&#43;08:00'/><meta property='og:image' content='https://ahao.ink/3.jpg' />
+<meta name="twitter:title" content="零食秒杀项目">
+<meta name="twitter:description" content="项目架构 后端项目部署在应用服务器上，这里用的是Tomcat
+数据层用的Mybatis框架用来进行数据访问
+视图层用的SpringMVC
+Spring 对整个Bean进行管理，Controller解析前端请求数据，完成取数据，业务层将数据返回给Controller，ViewResolve需要得到Controller传输的Model数据进行处理，最终返回JSON给前端
+前端静态资源部署在Nginx服务器上
+具体访问步骤：例如当浏览器访问某个商品的详情页，输入地址/item/detail/101发出了请求，首先请求到了Nginx服务器，Nginx将需要的静态资源等返回给浏览器，拿到item.html，看到图片文字等静态资源，如何跟服务端通信得到动态数据呢？这就需要Ajax发送异步请求给视图层，Controller调用业务层再调用数据层得到数据，经过加工返回给Controller，Controller将数据传给ViewResolver，最后ViewResolver将JSON数据传送给Ajax，Ajax回调函数接收到JSON数据渲染到页面。
+数据库设计 设计如下几张表
+用户表user_info：包括用户id，电话，密码，昵称，性别，年龄
+商品表item：包括商品id，商品名，商品价格，已售卖，图片，描述
+商品库存表item_stock：id，商品id，库存数
+活动表promotion：id，名称，开始时间，结束时间，商品id，活动价格
+订单详情表order_info：id，用户id，商品id，活动id，下单价格，下单数量，下单总数，下单时间
+项目结构 后端结构 项目结构如下：
+common包：放一些公共类。业务异常类、错误编码接口、给浏览器返回数据模板、工具类。
+BusinessException: 公共的业务异常类，当程序中发生异常，统一通过该类向外抛出异常
+component包：需要spring管理的公共对象
+configuration包：存放配置类
+controller包：controller层代码
+dao包：数据访问层
+service包：存放业务层
+entity包：存放实体类
+前端结构 项目部署 后端部署 打包项目(跳过所写的测试代码)：
+1  mvn clean package -Dmaven.test.skip=true   写一个start.sh文件来启动项目：
+1 2 3  pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp;   赋予start."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ahao.ink/3.jpg' />
+    <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐷</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ahao&#39;s Blog</a></h1>
+            <h2 class="site-description">道阻且长，行则将至</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页 / Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档 / Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索 / Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于 / About</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/posts/%E9%9B%B6%E9%A3%9F%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE/">
+                
+                    <img src="/3.jpg" loading="lazy" alt="Featured image of post 零食秒杀项目" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/%E9%9B%B6%E9%A3%9F%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE/">零食秒杀项目</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2022年3月8日</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="项目架构">项目架构</h2>
+<p>后端项目部署在应用服务器上，这里用的是Tomcat</p>
+<p>数据层用的Mybatis框架用来进行数据访问</p>
+<p>视图层用的SpringMVC</p>
+<p>Spring 对整个Bean进行管理，Controller解析前端请求数据，完成取数据，业务层将数据返回给Controller，ViewResolve需要得到Controller传输的Model数据进行处理，最终返回JSON给前端</p>
+<p>前端静态资源部署在Nginx服务器上</p>
+<p>具体访问步骤：例如当浏览器访问某个商品的详情页，输入地址/item/detail/101发出了请求，首先请求到了Nginx服务器，Nginx将需要的静态资源等返回给浏览器，拿到item.html，看到图片文字等静态资源，如何跟服务端通信得到动态数据呢？这就需要Ajax发送异步请求给视图层，Controller调用业务层再调用数据层得到数据，经过加工返回给Controller，Controller将数据传给ViewResolver，最后ViewResolver将JSON数据传送给Ajax，Ajax回调函数接收到JSON数据渲染到页面。</p>
+<p><img src="https://i.loli.net/2021/06/11/cneDpudU9v31hEx.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="项目架构"
+	
+	
+></p>
+<h2 id="数据库设计">数据库设计</h2>
+<p>设计如下几张表</p>
+<p><img src="http://tva2.sinaimg.cn/large/c0cb27b0ly1grekab61udj205s05ea9x.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>用户表user_info：包括用户id，电话，密码，昵称，性别，年龄</p>
+<p><img src="http://tva3.sinaimg.cn/large/003wTNsYly1grekep9xovj60gx00qdfm02.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>商品表item：包括商品id，商品名，商品价格，已售卖，图片，描述</p>
+<p><img src="http://tvax2.sinaimg.cn/large/c0cb27b0ly1grekhb9jz8j20is00ndfm.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>商品库存表item_stock：id，商品id，库存数</p>
+<p><img src="http://tva3.sinaimg.cn/large/c0cb27b0ly1grekjn2harj206f00o0sh.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>活动表promotion：id，名称，开始时间，结束时间，商品id，活动价格</p>
+<p><img src="http://tva1.sinaimg.cn/large/c0cb27b0ly1grekl1ifbxj20k200smwy.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>订单详情表order_info：id，用户id，商品id，活动id，下单价格，下单数量，下单总数，下单时间</p>
+<p><img src="http://tva3.sinaimg.cn/large/c0cb27b0ly1grekkt0gh4j20r200pa9v.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h2 id="项目结构">项目结构</h2>
+<h3 id="后端结构">后端结构</h3>
+<p>项目结构如下：</p>
+<p><img src="https://tvax4.sinaimg.cn/large/c0cb27b0ly1grejlg3yjoj206i05jq2t.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+<p>common包：放一些公共类。业务异常类、错误编码接口、给浏览器返回数据模板、工具类。</p>
+<p><img src="http://tvax4.sinaimg.cn/large/c0cb27b0ly1grejrakdtdj206d03kwec.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+<p>BusinessException: 公共的业务异常类，当程序中发生异常，统一通过该类向外抛出异常</p>
+<p>component包：需要spring管理的公共对象</p>
+<p><img src="http://tvax1.sinaimg.cn/large/c0cb27b0ly1grejvjtjx0j206201ba9u.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image"
+	
+	
+></p>
+<p>configuration包：存放配置类</p>
+<p><img src="http://tvax1.sinaimg.cn/large/c0cb27b0ly1grejwzt4ohj207e01kt8i.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>controller包：controller层代码</p>
+<p><img src="http://tvax1.sinaimg.cn/large/c0cb27b0ly1grek0djyr4j207d046glh.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>dao包：数据访问层</p>
+<p><img src="http://tva1.sinaimg.cn/large/c0cb27b0ly1grek1pgi1sj207r052mx2.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>service包：存放业务层</p>
+<p><img src="http://tvax2.sinaimg.cn/large/c0cb27b0ly1grek3ywek6j207o03g744.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>entity包：存放实体类</p>
+<p><img src="http://tva2.sinaimg.cn/large/c0cb27b0ly1grek2esvo2j206s0500sl.jpg"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h3 id="前端结构">前端结构</h3>
+<p><img src="/C:%5cUsers%5cmiao%5cDesktop%5c%e9%a1%b9%e7%9b%ae%5c%e7%a7%92%e6%9d%80%e9%a1%b9%e7%9b%ae%e5%9b%be%e7%89%87%5cimage-20210715115443122.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210715115443122"
+	
+	
+></p>
+<h2 id="项目部署">项目部署</h2>
+<h3 id="后端部署">后端部署</h3>
+<p>打包项目(跳过所写的测试代码)：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">mvn clean package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>写一个start.sh文件来启动项目：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nv">pid</span><span class="o">=</span><span class="sb">`</span>ps aux <span class="p">|</span> grep seckill <span class="p">|</span> grep -v grep <span class="p">|</span> awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="nb">kill</span> -9 <span class="nv">$pid</span>
+</span></span><span class="line"><span class="cl">nohup java -Xms1024m -Xmx1024m -XX:NewSize<span class="o">=</span>512m -XX:MaxNewSize<span class="o">=</span>512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active<span class="o">=</span><span class="nb">test</span> <span class="p">&amp;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>赋予start.sh执行权限并执行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">chmod -R <span class="m">777</span> startup.sh
+</span></span><span class="line"><span class="cl">sh start.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>至此，后端项目启动完成，可通过路径访问得到JSON数据。</p>
+<h3 id="前端部署">前端部署</h3>
+<p>接下来需要对前端进行部署</p>
+<p>启动nginx</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">nginx -c /etc/nginx/nginx.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://i.loli.net/2021/06/07/mXZopMy9FPq1nbc.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607140554066"
+	
+	
+></p>
+<p>将前端项目上传至服务器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"> <span class="nb">cd</span>  /usr/share/nginx/html/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>配置nginx</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">cd</span> /etc/nginx 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://i.loli.net/2021/06/07/9ClGvLrpE7nJNZ8.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607142058655"
+	
+	
+></p>
+<p><img src="https://i.loli.net/2021/06/07/BYuViTh9z7p1mDo.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607145018262"
+	
+	
+></p>
+<p>配置完毕重新启动nginx</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">nginx -s reload
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>商品详情页压测</p>
+<p><img src="https://i.loli.net/2021/06/07/O2neJXGxq9L76iv.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607162022974"
+	
+	
+></p>
+<p>200个线程</p>
+<p><img src="https://i.loli.net/2021/06/07/1NvJcWEm5tPKlRs.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607162104253"
+	
+	
+></p>
+<p><img src="https://i.loli.net/2021/06/07/dKbQJnL1gEFCvRf.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607162134318"
+	
+	
+></p>
+<p>对下单页面进行压测</p>
+<p><img src="https://i.loli.net/2021/06/07/Xe9OMIc7dY85fLx.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607163606744"
+	
+	
+></p>
+<p><img src="https://i.loli.net/2021/06/07/XLflqHBiexJbaCF.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607163625389"
+	
+	
+></p>
+<p><img src="https://i.loli.net/2021/06/07/BCx24f3WAlZhK1j.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607163639053"
+	
+	
+></p>
+<p>修改redis 配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">vim /etc/redis.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://i.loli.net/2021/06/07/4dj6OzeCmnchxUf.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607182600746"
+	
+	
+></p>
+<p><img src="https://i.loli.net/2021/06/07/lYSX361hBeJZM7s.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210607182649992"
+	
+	
+></p>
+<p>启动redis</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">redis-server /etc/redis.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>进入redis客户端</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">redis-cli -a password
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>redis 常用操作命令</p>
+<p>RocketMQ</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">wget https://mirror-hk.koddos.net/apache/rocketmq/4.8.0/rocketmq-all-4.8.0-bin-release.zip
+</span></span><span class="line"><span class="cl">unzip rocketmq-all-4.8.0-bin-release.zip
+</span></span><span class="line"><span class="cl">chmod -R <span class="m">777</span> rocketmq-all-4.8.0-bin-release
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>runserver.shs</p>
+<p><img src="https://i.loli.net/2021/06/09/vOBweJlNq6zREU1.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210609150337600"
+	
+	
+></p>
+<p>runbroker.sh</p>
+<p><img src="https://i.loli.net/2021/06/09/yOb9uHjDm86ECV4.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20210609150905219"
+	
+	
+></p>
+<h2 id="主页">主页</h2>
+<p><img src="https://s2.loli.net/2022/01/12/AmjSaOPDlfH42QB.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220112134841040"
+	
+	
+></p>
+<h2 id="注册">注册</h2>
+<p><img src="https://s2.loli.net/2022/01/12/kYJXnZALfEPegTG.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220112134924087"
+	
+	
+></p>
+<h2 id="登陆">登陆</h2>
+<p><img src="https://s2.loli.net/2022/01/12/7pgCIbUa42X5N3d.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220112134955113"
+	
+	
+></p>
+<p><img src="https://s2.loli.net/2022/01/12/9R1WpaqUIyulgf3.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220112135053049"
+	
+	
+></p>
+<p>登录后主页</p>
+<p><img src="https://s2.loli.net/2022/01/12/Qe4SKgCME7GizU6.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220112135221028"
+	
+	
+></p>
+<p>商品详情页</p>
+<p><img src="https://s2.loli.net/2022/01/12/DMRix3Nby6HOJw5.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220112135259078"
+	
+	
+></p>
+<p>下单成功扣减库存</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 2022年3月17日 12:54 CST
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+<div id="waline" class="waline-container"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+    .waline-container .vcount {
+        color: var(--card-text-color-main);
+    }
+</style><script>
+    
+    new Waline({"dark":"html[data-scheme=\"dark\"]","el":"#waline","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili","https://cdn.jsdelivr.net/gh/walinejs/emojis/qq","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus"],"lang":"zh-CN","locale":{"admin":"Admin"},"requiredMeta":["name","email","url"],"serverURL":"https://blog-api-2w7xkqg6y-ahaomin.vercel.app/","visitor":true});
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ahao&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.10.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#项目架构">项目架构</a></li>
+    <li><a href="#数据库设计">数据库设计</a></li>
+    <li><a href="#项目结构">项目结构</a>
+      <ol>
+        <li><a href="#后端结构">后端结构</a></li>
+        <li><a href="#前端结构">前端结构</a></li>
+      </ol>
+    </li>
+    <li><a href="#项目部署">项目部署</a>
+      <ol>
+        <li><a href="#后端部署">后端部署</a></li>
+        <li><a href="#前端部署">前端部署</a></li>
+      </ol>
+    </li>
+    <li><a href="#主页">主页</a></li>
+    <li><a href="#注册">注册</a></li>
+    <li><a href="#登陆">登陆</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

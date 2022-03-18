@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>分类 on ahao&#39;s Blog</title>
+        <link>https://ahao.ink/categories/</link>
+        <description>Recent content in 分类 on ahao&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language><atom:link href="https://ahao.ink/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Git</title>
+        <link>https://ahao.ink/categories/git/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://ahao.ink/categories/git/</guid>
+        <description>&lt;img src="https://ahao.ink/categories/git/1.png" alt="Featured image of post Git" /&gt;</description>
+        </item>
+        <item>
+        <title>Hugo</title>
+        <link>https://ahao.ink/categories/hugo/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://ahao.ink/categories/hugo/</guid>
+        <description>&lt;img src="https://ahao.ink/categories/hugo/1.png" alt="Featured image of post Hugo" /&gt;</description>
+        </item>
+        <item>
+        <title>Java</title>
+        <link>https://ahao.ink/categories/java/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://ahao.ink/categories/java/</guid>
+        <description>&lt;img src="https://ahao.ink/categories/java/1.jpg" alt="Featured image of post Java" /&gt;</description>
+        </item>
+        <item>
+        <title>MyBatis</title>
+        <link>https://ahao.ink/categories/mybatis/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://ahao.ink/categories/mybatis/</guid>
+        <description>&lt;img src="https://ahao.ink/categories/mybatis/1.png" alt="Featured image of post MyBatis" /&gt;</description>
+        </item>
+        <item>
+        <title>MySQL</title>
+        <link>https://ahao.ink/categories/mysql/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://ahao.ink/categories/mysql/</guid>
+        <description>&lt;img src="https://ahao.ink/categories/mysql/1.jpg" alt="Featured image of post MySQL" /&gt;</description>
+        </item>
+        <item>
+        <title>Redis</title>
+        <link>https://ahao.ink/categories/redis/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://ahao.ink/categories/redis/</guid>
+        <description>&lt;img src="https://ahao.ink/categories/redis/1.png" alt="Featured image of post Redis" /&gt;</description>
+        </item>
+        <item>
+        <title>Spring</title>
+        <link>https://ahao.ink/categories/spring/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://ahao.ink/categories/spring/</guid>
+        <description>&lt;img src="https://ahao.ink/categories/spring/1.png" alt="Featured image of post Spring" /&gt;</description>
+        </item>
+        
+    </channel>
+</rss>

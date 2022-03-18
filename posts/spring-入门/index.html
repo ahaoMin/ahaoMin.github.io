@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Spring 简介 前言 “Spring 真的那么有用吗？”
+首先 Spring 可谓是大名鼎鼎，如雷贯耳。而关于 Spring 的文章、书籍、教程更是数不胜数。可以说 Spring 贯穿我们的整个职业生涯，是框架界的常青树。那么我们这个专题专门来聊一聊： 到底 Spring 是什么，它的特点优势是什么，我们项目的开发为什么选择 Spring，它能帮助我们解决哪些问题？
+带着疑问，开始我们的专题。
+Spring 概述 先搞清楚 Spring 的概念： 官网定义：
+Spring 框架为任何类型的部署平台上的基于 Java 的现代企业应用程序提供了全面的编程和配置模型。
+Spring 的一个关键元素是在应用程序级别的基础架构支持：Spring 专注于企业应用程序的 “管道”，以便团队可以专注于应用程序级别的业务逻辑，而不必与特定的部署环境建立不必要的联系。
+通俗解释：
+简单来说：Spring 是一个免费开源框架，为了简化企业级项目开发，提供全面的开发部署解决方案。
+疑问导出：
+看到这儿，我们明白了一件事：Spring 是帮助我们开发项目的，使用起来很方便。
+那么问题来了：Spring 为了简化项目开发到底做了哪些事情？
+知识入门 Spring 核心功能 Spring 到底如何简化我们的项目开发呢？首先，来了解下 Spring 的体系结构。
+Spring 的体系结构介绍 结构图阐释：
+ 左上角勾画出负责持久层的部分，是 Spring 对数据持久化，事务管理，支持的功能框架。大家听过的 SpringDataJpa 就是其中的一种； 右上角勾画出是负责表现层的部分，是 Spring 对于表现层数据的处理部分的支持，比如：大家听说过的 SpirngMVC 就是其中的一种； 最底部的负责测试的部分 是 Spring 对于项目的测试 提供了完整的一个测试环境支持； 而中间的两部分 是我们大家常常俗称的 Spring 框架。  疑问导出：'><title>Spring 入门</title>
+
+<link rel='canonical' href='https://ahao.ink/posts/spring-%E5%85%A5%E9%97%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.baba905ab2d1209de74a1930c487a8a663c37860af6aa1c26588d298bf620306.css"><meta property='og:title' content='Spring 入门'>
+<meta property='og:description' content='Spring 简介 前言 “Spring 真的那么有用吗？”
+首先 Spring 可谓是大名鼎鼎，如雷贯耳。而关于 Spring 的文章、书籍、教程更是数不胜数。可以说 Spring 贯穿我们的整个职业生涯，是框架界的常青树。那么我们这个专题专门来聊一聊： 到底 Spring 是什么，它的特点优势是什么，我们项目的开发为什么选择 Spring，它能帮助我们解决哪些问题？
+带着疑问，开始我们的专题。
+Spring 概述 先搞清楚 Spring 的概念： 官网定义：
+Spring 框架为任何类型的部署平台上的基于 Java 的现代企业应用程序提供了全面的编程和配置模型。
+Spring 的一个关键元素是在应用程序级别的基础架构支持：Spring 专注于企业应用程序的 “管道”，以便团队可以专注于应用程序级别的业务逻辑，而不必与特定的部署环境建立不必要的联系。
+通俗解释：
+简单来说：Spring 是一个免费开源框架，为了简化企业级项目开发，提供全面的开发部署解决方案。
+疑问导出：
+看到这儿，我们明白了一件事：Spring 是帮助我们开发项目的，使用起来很方便。
+那么问题来了：Spring 为了简化项目开发到底做了哪些事情？
+知识入门 Spring 核心功能 Spring 到底如何简化我们的项目开发呢？首先，来了解下 Spring 的体系结构。
+Spring 的体系结构介绍 结构图阐释：
+ 左上角勾画出负责持久层的部分，是 Spring 对数据持久化，事务管理，支持的功能框架。大家听过的 SpringDataJpa 就是其中的一种； 右上角勾画出是负责表现层的部分，是 Spring 对于表现层数据的处理部分的支持，比如：大家听说过的 SpirngMVC 就是其中的一种； 最底部的负责测试的部分 是 Spring 对于项目的测试 提供了完整的一个测试环境支持； 而中间的两部分 是我们大家常常俗称的 Spring 框架。  疑问导出：'>
+<meta property='og:url' content='https://ahao.ink/posts/spring-%E5%85%A5%E9%97%A8/'>
+<meta property='og:site_name' content='ahao&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-04-08T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-17T12:00:52&#43;08:00'/><meta property='og:image' content='https://ahao.ink/28.jpg' />
+<meta name="twitter:title" content="Spring 入门">
+<meta name="twitter:description" content="Spring 简介 前言 “Spring 真的那么有用吗？”
+首先 Spring 可谓是大名鼎鼎，如雷贯耳。而关于 Spring 的文章、书籍、教程更是数不胜数。可以说 Spring 贯穿我们的整个职业生涯，是框架界的常青树。那么我们这个专题专门来聊一聊： 到底 Spring 是什么，它的特点优势是什么，我们项目的开发为什么选择 Spring，它能帮助我们解决哪些问题？
+带着疑问，开始我们的专题。
+Spring 概述 先搞清楚 Spring 的概念： 官网定义：
+Spring 框架为任何类型的部署平台上的基于 Java 的现代企业应用程序提供了全面的编程和配置模型。
+Spring 的一个关键元素是在应用程序级别的基础架构支持：Spring 专注于企业应用程序的 “管道”，以便团队可以专注于应用程序级别的业务逻辑，而不必与特定的部署环境建立不必要的联系。
+通俗解释：
+简单来说：Spring 是一个免费开源框架，为了简化企业级项目开发，提供全面的开发部署解决方案。
+疑问导出：
+看到这儿，我们明白了一件事：Spring 是帮助我们开发项目的，使用起来很方便。
+那么问题来了：Spring 为了简化项目开发到底做了哪些事情？
+知识入门 Spring 核心功能 Spring 到底如何简化我们的项目开发呢？首先，来了解下 Spring 的体系结构。
+Spring 的体系结构介绍 结构图阐释：
+ 左上角勾画出负责持久层的部分，是 Spring 对数据持久化，事务管理，支持的功能框架。大家听过的 SpringDataJpa 就是其中的一种； 右上角勾画出是负责表现层的部分，是 Spring 对于表现层数据的处理部分的支持，比如：大家听说过的 SpirngMVC 就是其中的一种； 最底部的负责测试的部分 是 Spring 对于项目的测试 提供了完整的一个测试环境支持； 而中间的两部分 是我们大家常常俗称的 Spring 框架。  疑问导出："><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ahao.ink/28.jpg' />
+    <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐷</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ahao&#39;s Blog</a></h1>
+            <h2 class="site-description">道阻且长，行则将至</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页 / Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档 / Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索 / Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于 / About</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/posts/spring-%E5%85%A5%E9%97%A8/">
+                
+                    <img src="/28.jpg" loading="lazy" alt="Featured image of post Spring 入门" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/spring/" >
+                Spring
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/spring-%E5%85%A5%E9%97%A8/">Spring 入门</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2021年4月8日</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="spring-简介">Spring 简介</h1>
+<p><img src="https://s2.loli.net/2021/12/24/B9ZUjq3FcsMDvHQ.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+></p>
+<h2 id="前言">前言</h2>
+<p><strong>“Spring 真的那么有用吗？”</strong></p>
+<p>首先 Spring 可谓是大名鼎鼎，如雷贯耳。而关于 Spring 的文章、书籍、教程更是数不胜数。可以说 Spring 贯穿我们的整个职业生涯，是框架界的常青树。那么我们这个专题专门来聊一聊： 到底 Spring 是什么，它的特点优势是什么，我们项目的开发为什么选择 Spring，它能帮助我们解决哪些问题？</p>
+<p><strong>带着疑问，开始我们的专题。</strong></p>
+<h2 id="spring-概述">Spring 概述</h2>
+<p><strong>先搞清楚 Spring 的概念：</strong>
+<strong>官网定义</strong>：</p>
+<p>Spring 框架为任何类型的部署平台上的基于 Java 的现代企业应用程序提供了全面的编程和配置模型。</p>
+<p>Spring 的一个关键元素是在应用程序级别的基础架构支持：Spring 专注于企业应用程序的 “管道”，以便团队可以专注于应用程序级别的业务逻辑，而不必与特定的部署环境建立不必要的联系。</p>
+<p><strong>通俗解释</strong>：</p>
+<p>简单来说：Spring 是一个免费开源框架，为了简化企业级项目开发，提供全面的开发部署解决方案。</p>
+<p><strong>疑问导出</strong>：</p>
+<p>看到这儿，我们明白了一件事：Spring 是帮助我们开发项目的，使用起来很方便。</p>
+<p>那么问题来了：<strong>Spring 为了简化项目开发到底做了哪些事情？</strong></p>
+<h2 id="知识入门">知识入门</h2>
+<h3 id="spring-核心功能">Spring 核心功能</h3>
+<p>Spring 到底如何简化我们的项目开发呢？首先，来了解下 <strong>Spring</strong> 的体系结构。</p>
+<h3 id="spring-的体系结构介绍">Spring 的体系结构介绍</h3>
+<p><img src="https://s2.loli.net/2021/12/24/LH9dlJ6fVQKCx2p.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+>
+<strong>结构图阐释</strong>：</p>
+<ol>
+<li>左上角勾画出负责持久层的部分，是 Spring 对数据持久化，事务管理，支持的功能框架。大家听过的 SpringDataJpa 就是其中的一种；</li>
+<li>右上角勾画出是负责表现层的部分，是 Spring 对于表现层数据的处理部分的支持，比如：大家听说过的 SpirngMVC 就是其中的一种；</li>
+<li>最底部的负责测试的部分 是 Spring 对于项目的测试 提供了完整的一个测试环境支持；</li>
+<li>而中间的两部分 是我们大家常常俗称的 Spring 框架。</li>
+</ol>
+<p><strong>疑问导出</strong>：</p>
+<p>看到这里大家可能会明白一点， Spring 其实是一个 “大家族”。从表现层、业务层、持久层，它都有对应的支持，而我们在框架学习的部分其实主要是使用了它中间的两个部分的核心功能。</p>
+<p><strong>那么，Spring 核心功能到底是什么呢？</strong></p>
+<h3 id="spring-的核心功能">Spring 的核心功能</h3>
+<p>大家对于使用 Spring 框架开发项目已经司空见惯了… 但是对于它的功能或者作用，描述出来总是差点什么，那么现在咱们详细聊一聊它的核心功能。</p>
+<p><strong>核心功能：</strong></p>
+<ol>
+<li><strong>控制反转（IoC）</strong>： 简单理解 IoC 是一种设计模式，将实例化对象的控制权 由手动的 new 变成了 Spring 框架通过反射机制实例化；</li>
+<li><strong>依赖注入（DI）</strong>： 首先理解依赖，程序运行的需要可以称之为依赖。由于 Spring 框架通过反射技术实例化了对象，并将对象的实例存入在容器进行管理。那么如果一个类中的属性为某个其余的类，属性无需手动赋值，通过 spring 的配置文件，或者 Spring 提供的注解，通过 spring 框架可以实现直接注入属性；</li>
+<li><strong>面向切面编程 （AOP）</strong>： 何谓切面，切面是数学中的一个概念，表示只有一个点接触到球体的一个平面称呼为切面，而接触点称呼为切点。那么在 Spring 中，切面编程指的就是在程序运行某个方法的时候，不修改原始执行代码逻辑，由程序动态地执行某些额外的功能，对原有的方法做增强，这就叫做面向切面编程，那个被监测的执行方法，称呼为切入点。</li>
+</ol>
+<p><strong>知识小结</strong>：</p>
+<p>Spring 是分层的 Java SE/EE 应用 轻量级开源框架，<strong>以 IoC（Inverse of Control：控制反转）和 AOP（Aspect Oriented Programming：面向切面编程）为内核，提供了展现层 Spring MVC 和持久层 Spring JDBC 以及业务层事务管理等众多的企业级应用技术，还能整合开源世界众多 著名的第三方框架和类库，</strong> 是使用最多的 Java EE 企业应用开源框架。</p>
+<p>使用 Spring 的意义在于：<strong>对于 bean 对象的实例管理更加方便，代码编写更加优雅，降低代码的耦合性，提升代码的扩展性。</strong></p>
+<h2 id="spring-的优势">Spring 的优势</h2>
+<p><strong>Spring 的概念和功能了解以后，下面谈谈它的优势在哪</strong></p>
+<ul>
+<li>Spring 简化项目开发 ： Spring 灵活全面的扩展功能，使我们开发项目如鱼得水 。通过 Spring 提供的 IoC 容器，可以将对象间的依赖关系交由 Spring 进行控制，避免硬编码所造成的过度程序耦合。用户也不必再为单例模式类、属性文件解析等这些很底层的需求编写代码，可以更专注于上层的应用；</li>
+<li>Spring 的面向切面编程 ：Spirng 框架的 AOP 面向切面编程，极大地提高了程序的扩展性，支持开发人员实现对程序的自定义增强。同时可以方便地使用 Spring 提供的事务管理；</li>
+<li>面向接口编程： 面向接口编程 降低代码的耦合性，同时也提高了代码的扩展性；</li>
+<li>测试方便：对于测试的支持 有很多的组件实现；</li>
+<li>方便集成第三方框架 Spring 可以降低各种框架的使用难度，提供了对各种优秀框架（Struts、Hibernate、Hessian、Quartz 等）的直接支持。</li>
+</ul>
+<h2 id="小结">小结</h2>
+<p>本节主要对于 Spring 框架做了入门介绍，通过本节的学习，我们应该知道以下几点：</p>
+<ol>
+<li>Spring 框架的概念；</li>
+<li>Spring 框架的意义；</li>
+<li>Spring 框架的体系结构；</li>
+<li>Spring 框架的核心功能；</li>
+<li>Spring 框架的优势；</li>
+</ol>
+<h1 id="spring-工程的搭建">Spring 工程的搭建</h1>
+<h2 id="前言-1">前言</h2>
+<p><strong>“Spring 的工程如何创建？”</strong></p>
+<p>在上一节中我们通过 Spring 的简介，了解了 Spring 的概念、体系结构、与它的核心功能。那么本章带你体验一下 Spring 的项目开发和我们之前搭建过的开发项目有哪些不同。</p>
+<h3 id="spring-框架版本介绍与依赖引入">Spring 框架版本介绍与依赖引入</h3>
+<p><strong>版本历史</strong>
+Spring 诞生到现在经历太多的历史版本，有的已经消失在历史长河中了… 我们选择最新的版本给大家进行案例讲解。</p>
+<ul>
+<li>5.2.x 是最新的生产线（通常于 2019 年 9 月下旬提供）；</li>
+<li>5.1.x 是之前的生产线（自 2018 年 9 月以来），一直得到积极支持，直到 2020 年底；</li>
+<li>5.0.x 于 2019 年第二季度进入 EOL 阶段。出于对 5.0.x 用户的礼貌，我们将在 2020 年 1 月之前提供主动维护，并在 2020 年底之前提供安全补丁（如果需要）；</li>
+<li>4.3.x 是第四代的最后一个功能分支。它具有延长的维护期限，直到 2020 年 1 月，并且安全补丁甚至超过了这一点。4.3.x 将于 2020 年 12 月 31 日达到其正式停产（停产）；</li>
+<li>截至 2016 年 12 月 31 日，3.2.x 属于产品停产（寿命终止）。该产品线中没有计划进一步的维护版本和安全补丁。请尽快迁移到 4.3 或 5.x。</li>
+</ul>
+<p>我们建议从 Maven Central 升级到最新的 Spring Framework 5.2.x 版本。</p>
+<p>以上是官网列出 Spring 的历史版本介绍，我们采用的是 5.2.2 版本，对应的 jdk 最少是 jdk 1.8 ，我相信大家的 jdk 一般来讲都是满足要求的。</p>
+<h3 id="spring-框架源码下载">Spring 框架源码下载</h3>
+<p><strong>下载方式</strong>：</p>
+<ol>
+<li>下载源码文件 。
+Spring 的源码下载地址 ：
+<a class="link" href="https://github.com/spring-projects/spring-framework/releases"  target="_blank" rel="noopener"
+    >https://github.com/spring-projects/spring-framework/releases</a></li>
+<li>第二种是使用 maven 的坐标方式 。
+maven 的 pom 文件坐标。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.springframework<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-context<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>5.2.2.RELEASE<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="工程创建">工程创建</h2>
+<p><strong>准备好依赖之后 废话不多说，我们开始撸代码</strong> 。</p>
+<h3 id="使用-idea-创建-web-工程">使用 IDEA 创建 Web 工程</h3>
+<p>开发工具选择 idea ，创建 Maven 的 jar 工程即可。因为涉及不到浏览器的请求，所以无需创建 web 工程。</p>
+<p>创建 Maven 工程 。</p>
+<p><img src="https://s2.loli.net/2021/12/24/vPE6sKzjn5RoQku.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>补全坐标信息。</p>
+<p><img src="https://s2.loli.net/2021/12/24/jcZiLtYF7yofrg8.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>继续下一步 finish 完成创建即可。</p>
+<h3 id="引入项目使用的坐标依赖">引入项目使用的坐标依赖</h3>
+<p>将准备好的坐标信息粘贴到工程下 <code>pom</code> 文件中 。 看下图：</p>
+<p><img src="https://s2.loli.net/2021/12/24/KENkOMdoZnhXUfR.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h3 id="编写-spring-框架使用的配置文件">编写 Spring 框架使用的配置文件</h3>
+<p>坐标有了之后，说明我们的工程中已经引入了 Spring 框架的依赖。点开左侧的 External Libraries 查看一下 。</p>
+<p><img src="https://s2.loli.net/2021/12/24/DhOstJf3YHwGnIA.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>那么看到上面的 jar 包列表，表示 Spring 框架中的基本依赖我们已经成功引入。接下来：既然我们使用的是框架，框架是一个半成品，已经封装好了很多功能提供我们使用，而我们如何让他们工作呢？ 这里需要一个和 Spirng 框架通信的桥梁 —<strong>Spring 框架的核心配置文件。</strong></p>
+<p><strong>小提示</strong>：
+文件的名称可以随便起，一般习惯使用 <code>applicationContext.xml</code>。
+文件的位置放在哪里呢？ maven 工程需要放在 <code>src</code> 下面的 <code>resources</code> 下面，如下图：</p>
+<p><img src="https://s2.loli.net/2021/12/24/PtnvqB7Uojb6OaV.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>那么配置文件是空的，不要着急。到底应该配置什么，不是自己臆想猜测的。
+如果你已经下载了源码，那么解压缩它，打开 <strong>docs\spring-framework-reference</strong> 目录，打开 <strong>core.html</strong> 查看官方文档，
+下图：
+<img src="https://img.mukewang.com/wiki/5e8f4adb096cc7c014390571.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+>
+将上面的实例配置信息拷贝到我们的配置文件中，它只是给了最基本的配置头信息，内容部分 针对 bean 做初始化的部分 需要我们自行填充 。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;beans</span> <span class="na">xmlns=</span><span class="s">&#34;http://www.springframework.org/schema/beans&#34;</span>
+</span></span><span class="line"><span class="cl">       <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+</span></span><span class="line"><span class="cl">       <span class="na">xsi:schemaLocation=</span><span class="s">&#34;http://www.springframework.org/schema/beans
+</span></span></span><span class="line"><span class="cl"><span class="s">       http://www.springframework.org/schema/beans/spring-beans.xsd&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/beans&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="编写代码测试">编写代码测试</h2>
+<p>准备好工程后，编写我们的代码。</p>
+<h3 id="编写接口和接口的实现类">编写接口和接口的实现类</h3>
+<p><strong>代码如下：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//接口的代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserService</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUser</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//实现类的代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserServiceImpl</span> <span class="kd">implements</span> <span class="n">UserService</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveUser</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;service的save方法执行了&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="补充-spring-的配置文件">补充 Spring 的配置文件</h3>
+<p>配置文件的目的是将我们自定义的实现类交给 Spring 的容器管理。因为 Spring 框架核心功能之一就是 IoC 控制反转，目的是将对象实例化的动作交给容器。还记得第一节介绍的吗？不记得了？走你，剩下的我们继续。最终 Spring 的配置文件如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;beans</span> <span class="na">xmlns=</span><span class="s">&#34;http://www.springframework.org/schema/beans&#34;</span>
+</span></span><span class="line"><span class="cl">       <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+</span></span><span class="line"><span class="cl">       <span class="na">xmlns:util=</span><span class="s">&#34;http://www.springframework.org/schema/util&#34;</span>
+</span></span><span class="line"><span class="cl">       <span class="na">xsi:schemaLocation=</span><span class="s">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+</span></span></span><span class="line"><span class="cl"><span class="s">        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- 此标签的作用 是实例化UserServiceImpl类的实例 交给 Spring 容器 --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&#34;userService&#34;</span> <span class="na">class=</span><span class="s">&#34;com.wyan.service.impl.UserServiceImpl&#34;</span><span class="nt">&gt;&lt;/bean&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/beans&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="测试结果">测试结果</h3>
+<p>从容器中获取对象实例，调用提供的方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DemoTest</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ApplicationContext</span> <span class="n">context</span> <span class="o">=</span> 
+</span></span><span class="line"><span class="cl">                <span class="k">new</span> <span class="n">ClassPathXmlApplicationContext</span><span class="o">(</span><span class="s">&#34;classpath:applicationContext.xml&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">UserService</span> <span class="n">service</span> <span class="o">=</span> <span class="o">(</span><span class="n">UserService</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&#34;userService&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">service</span><span class="o">.</span><span class="na">saveUser</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>解释：</p>
+<ol>
+<li><code>ApplicationContext</code> 是 Spring 框架提供的一个接口，目前只需要知道它是作为存储实例化 bean 对象的容器即可。下一节我们会细讲。</li>
+<li><code>context.getBean ()</code> 方法是通过配置文件中声明的 bean 标签 id 属性获取容器内的实例。</li>
+</ol>
+<p>最终结果如下：
+<img src="https://s2.loli.net/2021/12/24/l1aAIsexFucUPQw.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+>
+可以看到控制台打印输出 证明确实从容器中获取到了 userService 的实例。入门就是如此简单…</p>
+<h2 id="小结-1">小结</h2>
+<p>技术之路很简单 一是思路步骤清晰，二就是代码的熟练度。
+先理清入门示例的步骤 ：</p>
+<ol>
+<li>创建 Maven 工程；</li>
+<li>导入 Spring 的依赖；</li>
+<li>编写 Spring 的配置文件；</li>
+<li>编写测试的代码。</li>
+</ol>
+<h1 id="spring-工程执行过程">Spring 工程执行过程</h1>
+<h2 id="前言-2">前言</h2>
+<p><strong>Spring 框架是如何工作的？</strong></p>
+<p>本节目的在于帮助大家理解 Spring 框架底层干了什么事情。</p>
+<p>在上一节中我们通过一个入门工程简单地体验了一把 Spring 的使用。</p>
+<p>我们发现，通过构造一个 <code>ClassPathXmlApplicationContext</code> 对象，加载项目的 <code>applicationContext.xml</code> 文件，确实可以实例化对象。</p>
+<p><strong>疑问导出</strong></p>
+<p>而脑海中不禁有一个想法… Spring 如何初始化对象的实例的？我们又如何从容器中获取得到对象的实例的呢？</p>
+<p>带着疑问… 开启本节的源码和原理之旅。</p>
+<h2 id="容器初始化">容器初始化</h2>
+<p>回顾代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ApplicationContext</span> <span class="n">context</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">ClassPathXmlApplicationContext</span><span class="o">(</span><span class="s">&#34;applicationContext.xml&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">UserService</span> <span class="n">service</span> <span class="o">=</span> <span class="o">(</span><span class="n">UserService</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&#34;userService&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">service</span><span class="o">.</span><span class="na">saveUser</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在上面的代码中可以得知 Spring 的容器是 <code>ApplicationContext</code>，那么它到底是什么东西呢？先跟我一起追踪一下它的角色。
+<strong>官方文档</strong>
+<img src="https://s2.loli.net/2021/12/24/ashIAcxbU7Evonz.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+>
+<strong>通俗解释</strong></p>
+<p>简单翻译过来就是 <code>ApplicationContext</code> 是一个接口，是 <code>BeanFactory</code> 这个接口的子接口，它扩展了 <code>BeanFactory</code> 这个接口，提供了额外附加的功能。
+而 <code>BeanFactory</code> 是管理 bean 对象的容器的根接口，大家了解下就好，我们是针对它的子接口 <code>ClassPathXmlApplicationContext</code> 做的实例化，目的是加载项目中的 Spring 的配置文件，使 Spring 来管理我们定义的 bean 对象。</p>
+<p><strong>疑问导出</strong>
+那么我们的问题是…<code>ClassPathXmlApplicationContext</code> 对象实例化之后，干了哪些事情呢？</p>
+<h3 id="容器初始化执行动作">容器初始化执行动作</h3>
+<p><strong><code>applicationContext</code> 实例化执行代码逻辑</strong> 。
+我们追踪下源码，发现 <code>ClassPathXmlApplicationContext</code> 初始化的时候，它做了一系列的事情。源码如下：</p>
+<p><img src="https://s2.loli.net/2021/12/24/r6jT8bPDF14SO39.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+></p>
+<p><strong>代码解释：</strong></p>
+<ol>
+<li>是初始化 <code>ClassPathXmlApplicationContext</code> 对象执行的有参构造；</li>
+<li>加载项目下的 xml 配置文件；</li>
+<li>调用 refresh 刷新容器的方法 bean 的实例化就在这个方法中。</li>
+</ol>
+<p><strong>继续跟踪：</strong></p>
+<h3 id="容器初始化-bean-对象动作">容器初始化 bean 对象动作</h3>
+<p><strong>下面是从源码中粘贴的部分代码</strong></p>
+<p><img src="https://s2.loli.net/2021/12/24/gvqyasNMPkohHJ4.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+>
+<strong>步骤阐述：</strong></p>
+<ol>
+<li>1 的位置：是准备刷新，那么 Spring 只是设置刷新的标记，加载了外部的 <code>properties</code> 属性文件；</li>
+<li>2 的位置：是准备 bean 工厂对象；</li>
+<li>3 的位置：这一步骤就加载了配置文件中的所有 bean 标签，但是并没有对他们进行实例化；</li>
+<li>4 的位置：完成此上下文的 bean 工厂的初始化，初始化所有剩余的单例 bean。（Spring 中默认加载的 bean 就是单例模式后面生命周期会讲）</li>
+<li>最后的位置：完成容器的刷新，也就是所有的 bean 初始化完成。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">		<span class="c1">//这里粘贴一部分初始化代码的逻辑 帮助大家理解
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// Instantiate all remaining (non-lazy-init) singletons.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">beanFactory</span><span class="o">.</span><span class="na">preInstantiateSingletons</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// Trigger initialization of all non-lazy singleton beans...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//所有非懒加载的单例bean的触发器初始化。。。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">beanName</span> <span class="o">:</span> <span class="n">beanNames</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		  <span class="o">...</span><span class="c1">//省略循环的代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>OK 上面就是加载配置文件后 Spring 框架做的所有事情，当然实际底层涉及的东西 更多，但是我们没有必要深究，毕竟我们是理解过程，不是追求实现。</p>
+<p><strong>疑问导出：</strong></p>
+<p>我们整理了 Spring 初始化 bean 对象的过程，那么如果容器中确实存在了 bean 的实例，我们是如何获取得到的呢？</p>
+<h2 id="容器中获取对象的过程">容器中获取对象的过程</h2>
+<p>还是先看下我们获取容器对象的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ApplicationContext</span> <span class="n">context</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">            <span class="k">new</span> <span class="n">ClassPathXmlApplicationContext</span><span class="o">(</span><span class="s">&#34;classpath:applicationContext.xml&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">UserService</span> <span class="n">service</span> <span class="o">=</span> <span class="o">(</span><span class="n">UserService</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">&#34;userService&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">service</span><span class="o">.</span><span class="na">saveUser</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>代码分析</strong>：</p>
+<p><code>context.getBean</code> 的方法是通过 <strong>bean</strong> 标签里的 <strong>id</strong> 来从容器中获取，那么我们看下源码 ：
+在父类 <strong><code>AbstractApplicationContext</code></strong> 中有对 getBean 方法的实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">	<span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">getBean</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">BeansException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">assertBeanFactoryActive</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">getBeanFactory</span><span class="o">().</span><span class="na">getBean</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>追踪父类方法</strong>
+最终通过我们层层追踪，我们在 <code>AbstractAutowireCapableBeanFactory</code> 中发现这样的一段代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">protected</span> <span class="n">Object</span> <span class="nf">doCreateBean</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="kd">final</span> <span class="n">RootBeanDefinition</span> <span class="n">mbd</span><span class="o">,</span> <span class="kd">final</span> <span class="nd">@Nullable</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">			<span class="kd">throws</span> <span class="n">BeanCreationException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//省略大量方法内部代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">//...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// Initialize the bean instance.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="n">Object</span> <span class="n">exposedObject</span> <span class="o">=</span> <span class="n">bean</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//给实例中的属性赋值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="n">populateBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">instanceWrapper</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//真实实例化对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="n">exposedObject</span> <span class="o">=</span> <span class="n">initializeBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">exposedObject</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">//继续省略大量方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">//...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// Register bean as disposable.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//将实例化后的对象放入容器中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="n">registerDisposableBeanIfNecessary</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">bean</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">catch</span> <span class="o">(</span><span class="n">BeanDefinitionValidationException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">throw</span> <span class="k">new</span> <span class="n">BeanCreationException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">					<span class="n">mbd</span><span class="o">.</span><span class="na">getResourceDescription</span><span class="o">(),</span> <span class="n">beanName</span><span class="o">,</span> <span class="s">&#34;Invalid destruction signature&#34;</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//返回实例化后的对象实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">return</span> <span class="n">exposedObject</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面源码中我们可以看到： 对象实例的获取好像是在获取的时候执行的 <code>doCreateBean</code>，那么之前记载的 <code>xml</code> 文件不是实例过了吗？稍微解释下：加载文件时候的实例化操作，其实是实例化了一个 Spring 框架提供的对象，作用是对于我们 bean 对象做描述，这里才是真实的实例化动作。我们再看看 <code>registerDisposableBeanIfNecessary</code> 这个方法做的是什么。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerDisposableBean</span><span class="o">(</span><span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">DisposableBean</span> <span class="n">bean</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">disposableBeans</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">this</span><span class="o">.</span><span class="na">disposableBeans</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">bean</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://s2.loli.net/2021/12/24/9KSujYBM6smgwIC.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+></p>
+<p><strong>结论</strong>：
+一切真相大白。它其实就是一个 map 集合 ，这个 map 集合的 key 就是我们定义的 bean 的 id 或者 bean 的 name ，那么值就是对象的实例。</p>
+<h2 id="小结-2">小结</h2>
+<p>本节带着大家梳理了一下 Spring 初始化 bean 和获取 bean 的流程：</p>
+<ol>
+<li>Spring 框架通过 ResourceLoader 加载项目的 xml 配置文件；</li>
+<li>读取 xml 的配置信息 变成对象存储，但未实例化；</li>
+<li>通过 bean 工厂处理器对 bean 做实例化，存储到一个 map 集合中默认是单例；</li>
+<li>获取对象 通过 xml 文件中 bean 的 id 从 map 集合中通过 get (key) 获取。</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 2022年3月17日 12:00 CST
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-contents--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-contents">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-aop/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/30.jpg" loading="lazy" data-key="" data-hash="/30.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring AOP</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-di/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/29.png" loading="lazy" data-key="" data-hash="/29.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring DI</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-ioc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/31.jpg" loading="lazy" data-key="" data-hash="/31.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring IoC</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/spring-mvc/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/32.jpg" loading="lazy" data-key="" data-hash="/32.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring MVC</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+<div id="waline" class="waline-container"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+    .waline-container .vcount {
+        color: var(--card-text-color-main);
+    }
+</style><script>
+    
+    new Waline({"dark":"html[data-scheme=\"dark\"]","el":"#waline","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili","https://cdn.jsdelivr.net/gh/walinejs/emojis/qq","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus"],"lang":"zh-CN","locale":{"admin":"Admin"},"requiredMeta":["name","email","url"],"serverURL":"https://blog-api-2w7xkqg6y-ahaomin.vercel.app/","visitor":true});
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ahao&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.10.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#spring-概述">Spring 概述</a></li>
+    <li><a href="#知识入门">知识入门</a>
+      <ol>
+        <li><a href="#spring-核心功能">Spring 核心功能</a></li>
+        <li><a href="#spring-的体系结构介绍">Spring 的体系结构介绍</a></li>
+        <li><a href="#spring-的核心功能">Spring 的核心功能</a></li>
+      </ol>
+    </li>
+    <li><a href="#spring-的优势">Spring 的优势</a></li>
+    <li><a href="#小结">小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#前言-1">前言</a>
+      <ol>
+        <li><a href="#spring-框架版本介绍与依赖引入">Spring 框架版本介绍与依赖引入</a></li>
+        <li><a href="#spring-框架源码下载">Spring 框架源码下载</a></li>
+      </ol>
+    </li>
+    <li><a href="#工程创建">工程创建</a>
+      <ol>
+        <li><a href="#使用-idea-创建-web-工程">使用 IDEA 创建 Web 工程</a></li>
+        <li><a href="#引入项目使用的坐标依赖">引入项目使用的坐标依赖</a></li>
+        <li><a href="#编写-spring-框架使用的配置文件">编写 Spring 框架使用的配置文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#编写代码测试">编写代码测试</a>
+      <ol>
+        <li><a href="#编写接口和接口的实现类">编写接口和接口的实现类</a></li>
+        <li><a href="#补充-spring-的配置文件">补充 Spring 的配置文件</a></li>
+        <li><a href="#测试结果">测试结果</a></li>
+      </ol>
+    </li>
+    <li><a href="#小结-1">小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#前言-2">前言</a></li>
+    <li><a href="#容器初始化">容器初始化</a>
+      <ol>
+        <li><a href="#容器初始化执行动作">容器初始化执行动作</a></li>
+        <li><a href="#容器初始化-bean-对象动作">容器初始化 bean 对象动作</a></li>
+      </ol>
+    </li>
+    <li><a href="#容器中获取对象的过程">容器中获取对象的过程</a></li>
+    <li><a href="#小结-2">小结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

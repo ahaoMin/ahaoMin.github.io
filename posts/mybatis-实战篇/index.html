@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='MyBatis 使用 Redis 缓存 前言 在MyBatis 缓存一节中，我们介绍了 MyBatis 的多级缓存。MyBatis 的二级缓存可在多个会话中共享缓存，但是这也加大了内存的使用空间，如果二级缓存空间占有量过多势必会导致程序运行空间的不足，因此我们需要将二级缓存转移到专业的缓存服务器上。
+Redis 是一个高性能的 kv 数据库，被广泛的使用在缓存服务上，MyBatis 项目开发者提供了 Redis 缓存的实现。本小节我们将一起来学习如何在 MyBatis 中集成 Redis 缓存。
+准备 添加依赖 在项目的 pom.xml 文件中添加上 mybatis-redis 依赖：
+1 2 3 4 5  &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.mybatis.caches&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mybatis-redis&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.0-beta2&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;   mybatis-redis 目前还只有 beta 版，相信不久后就可以到正式版了。
+Redis服务器 请确保你拥有一台可用的 Redis 服务器，并能够正常运行。如下：
+1 2  127.0.0.1:6379&amp;gt; ping PONG   Redis配置文件 在 src/main/resources 目录下新增 redis.properties 配置文件，并向其中添加如下配置：
+1 2 3 4 5 6 7  host=localhost port=6379 connectionTimeout=5OOO soTimeout=5OOO password=123456 database=O clientName=   注意，请根据自己的环境来修改配置，如密码和主机。'><title>MyBatis 实战篇</title>
+
+<link rel='canonical' href='https://ahao.ink/posts/mybatis-%E5%AE%9E%E6%88%98%E7%AF%87/'>
+
+<link rel="stylesheet" href="/scss/style.min.baba905ab2d1209de74a1930c487a8a663c37860af6aa1c26588d298bf620306.css"><meta property='og:title' content='MyBatis 实战篇'>
+<meta property='og:description' content='MyBatis 使用 Redis 缓存 前言 在MyBatis 缓存一节中，我们介绍了 MyBatis 的多级缓存。MyBatis 的二级缓存可在多个会话中共享缓存，但是这也加大了内存的使用空间，如果二级缓存空间占有量过多势必会导致程序运行空间的不足，因此我们需要将二级缓存转移到专业的缓存服务器上。
+Redis 是一个高性能的 kv 数据库，被广泛的使用在缓存服务上，MyBatis 项目开发者提供了 Redis 缓存的实现。本小节我们将一起来学习如何在 MyBatis 中集成 Redis 缓存。
+准备 添加依赖 在项目的 pom.xml 文件中添加上 mybatis-redis 依赖：
+1 2 3 4 5  &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.mybatis.caches&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mybatis-redis&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.0-beta2&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;   mybatis-redis 目前还只有 beta 版，相信不久后就可以到正式版了。
+Redis服务器 请确保你拥有一台可用的 Redis 服务器，并能够正常运行。如下：
+1 2  127.0.0.1:6379&amp;gt; ping PONG   Redis配置文件 在 src/main/resources 目录下新增 redis.properties 配置文件，并向其中添加如下配置：
+1 2 3 4 5 6 7  host=localhost port=6379 connectionTimeout=5OOO soTimeout=5OOO password=123456 database=O clientName=   注意，请根据自己的环境来修改配置，如密码和主机。'>
+<meta property='og:url' content='https://ahao.ink/posts/mybatis-%E5%AE%9E%E6%88%98%E7%AF%87/'>
+<meta property='og:site_name' content='ahao&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-06-16T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-17T11:59:33&#43;08:00'/><meta property='og:image' content='https://ahao.ink/20.jpg' />
+<meta name="twitter:title" content="MyBatis 实战篇">
+<meta name="twitter:description" content="MyBatis 使用 Redis 缓存 前言 在MyBatis 缓存一节中，我们介绍了 MyBatis 的多级缓存。MyBatis 的二级缓存可在多个会话中共享缓存，但是这也加大了内存的使用空间，如果二级缓存空间占有量过多势必会导致程序运行空间的不足，因此我们需要将二级缓存转移到专业的缓存服务器上。
+Redis 是一个高性能的 kv 数据库，被广泛的使用在缓存服务上，MyBatis 项目开发者提供了 Redis 缓存的实现。本小节我们将一起来学习如何在 MyBatis 中集成 Redis 缓存。
+准备 添加依赖 在项目的 pom.xml 文件中添加上 mybatis-redis 依赖：
+1 2 3 4 5  &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.mybatis.caches&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mybatis-redis&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.0-beta2&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;   mybatis-redis 目前还只有 beta 版，相信不久后就可以到正式版了。
+Redis服务器 请确保你拥有一台可用的 Redis 服务器，并能够正常运行。如下：
+1 2  127.0.0.1:6379&amp;gt; ping PONG   Redis配置文件 在 src/main/resources 目录下新增 redis.properties 配置文件，并向其中添加如下配置：
+1 2 3 4 5 6 7  host=localhost port=6379 connectionTimeout=5OOO soTimeout=5OOO password=123456 database=O clientName=   注意，请根据自己的环境来修改配置，如密码和主机。"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ahao.ink/20.jpg' />
+    <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐷</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ahao&#39;s Blog</a></h1>
+            <h2 class="site-description">道阻且长，行则将至</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页 / Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档 / Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索 / Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于 / About</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/posts/mybatis-%E5%AE%9E%E6%88%98%E7%AF%87/">
+                
+                    <img src="/20.jpg" loading="lazy" alt="Featured image of post MyBatis 实战篇" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/mybatis/" >
+                MyBatis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/mybatis-%E5%AE%9E%E6%88%98%E7%AF%87/">MyBatis 实战篇</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2021年6月16日</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="mybatis-使用-redis-缓存">MyBatis 使用 Redis 缓存</h1>
+<h2 id="前言">前言</h2>
+<p>在MyBatis 缓存一节中，我们介绍了 MyBatis 的多级缓存。MyBatis 的二级缓存可在多个会话中共享缓存，但是这也加大了内存的使用空间，如果二级缓存空间占有量过多势必会导致程序运行空间的不足，因此我们需要将二级缓存转移到专业的缓存服务器上。</p>
+<p>Redis 是一个高性能的 kv 数据库，被广泛的使用在缓存服务上，MyBatis 项目开发者提供了 Redis 缓存的实现。本小节我们将一起来学习如何在 MyBatis 中集成 Redis 缓存。</p>
+<h2 id="准备">准备</h2>
+<h3 id="添加依赖">添加依赖</h3>
+<p>在项目的 pom.xml 文件中添加上 mybatis-redis 依赖：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>org.mybatis.caches<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>mybatis-redis<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>1.0.0-beta2<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>mybatis-redis 目前还只有 beta 版，相信不久后就可以到正式版了。</p>
+<h3 id="redis服务器">Redis服务器</h3>
+<p>请确保你拥有一台可用的 Redis 服务器，并能够正常运行。如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">127.0.0.1:6379&gt; ping
+</span></span><span class="line"><span class="cl">PONG
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="redis配置文件">Redis配置文件</h3>
+<p>在 src/main/resources 目录下新增 redis.properties 配置文件，并向其中添加如下配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">host=localhost
+</span></span><span class="line"><span class="cl">port=6379
+</span></span><span class="line"><span class="cl">connectionTimeout=5OOO
+</span></span><span class="line"><span class="cl">soTimeout=5OOO
+</span></span><span class="line"><span class="cl">password=123456
+</span></span><span class="line"><span class="cl">database=O
+</span></span><span class="line"><span class="cl">clientName=
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意，请根据自己的环境来修改配置，如密码和主机。</p>
+<h2 id="使用">使用</h2>
+<h3 id="配置">配置</h3>
+<p>在对应的 mapper 配置文件中，如 UserMapper.xml 文件添加上对应的缓存配置。如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;cache</span> <span class="na">type=</span><span class="s">&#34;org.mybatis.caches.redis.RedisCache&#34;</span> <span class="nt">/&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="调用">调用</h3>
+<p>配置好以后，我们就可以直接在程序中调用了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">SqlSession</span> <span class="n">session1</span> <span class="o">=</span> <span class="n">sqlSessionFactory</span><span class="o">.</span><span class="na">openSession</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">UserMapper</span> <span class="n">userMapper1</span> <span class="o">=</span> <span class="n">session1</span><span class="o">.</span><span class="na">getMapper</span><span class="o">(</span><span class="n">UserMapper</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">User</span> <span class="n">user1</span> <span class="o">=</span> <span class="n">userMapper1</span><span class="o">.</span><span class="na">selectUserById</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">user1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">SqlSession</span> <span class="n">session2</span> <span class="o">=</span> <span class="n">sqlSessionFactory</span><span class="o">.</span><span class="na">openSession</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">UserMapper</span> <span class="n">userMapper2</span> <span class="o">=</span> <span class="n">session2</span><span class="o">.</span><span class="na">getMapper</span><span class="o">(</span><span class="n">UserMapper</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">User</span> <span class="n">user2</span> <span class="o">=</span> <span class="n">userMapper2</span><span class="o">.</span><span class="na">selectUserById</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">user2</span><span class="o">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意，User 对象必须实现<code>Serializable</code>接口才可被缓存。 比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当缓存成功，程序会有如下输出，表示缓存击中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">20:58:12.462 [main] DEBUG com.ahao.mybatis.mapper.UserMapper - Cache Hit Ratio [com.ahao.mybatis.mapper.UserMapper]: 1.0
+</span></span><span class="line"><span class="cl">User{id=1, username=&#39;peter&#39;, age=18, score=100}
+</span></span><span class="line"><span class="cl">20:58:12.499 [main] DEBUG com.ahao.mybatis.mapper.UserMapper - Cache Hit Ratio [com.ahao.mybatis.mapper.UserMapper]: 1.0
+</span></span><span class="line"><span class="cl">User{id=1, username=&#39;peter&#39;, age=18, score=100}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><strong>提示：</strong> 在第一次运行时，会向 Redis 中存放数据，不会使用到缓存，第二次运行时则才会使用到缓存。</p>
+</blockquote>
+<h2 id="小结">小结</h2>
+<ul>
+<li>Redis 缓存十分常见，MyBatis 集成 Redis 缓存也异常方便，但是在实际生产环境下如此应用的都不多，而是直接选择其它方式来使用 Redis 缓存。</li>
+</ul>
+<h1 id="spring-boot-集成-mybatis">spring-boot 集成 MyBatis</h1>
+<h2 id="前言-1">前言</h2>
+<p>spring-boot 可谓是 Java 领域中最火的框架之一， 也是目前 Java 应用开发的事实标准，如果不会使用未免有些 out。本小节，我们将一起学习如何使用 spring-boot 来集成 MyBatis。</p>
+<h2 id="项目初始化">项目初始化</h2>
+<p>对于拥有 IDEA 专业版的人来说，新建 spring-boot 项目是十分方便的，当然如果你没有也没关系，Spring 官方给我们提供了一个快速新建项目的网站。</p>
+<p>打开 <a class="link" href="https://start.spring.io/"  target="_blank" rel="noopener"
+    >https://start.spring.io/</a> 。如下：
+<img src="https://s2.loli.net/2021/12/26/NCji89PRvrogdMz.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片描述"
+	
+	
+></p>
+<p>给项目输入合适的 groupId 和 artifactId 然后点击生成按钮，浏览器会自动下载一个压缩包 springboot-mybatis-exmaple.zip。</p>
+<p>解压该包，并通过 IDE 打开这个项目。</p>
+<h2 id="启动器">启动器</h2>
+<p>在项目的 pom 文件中添加如下 3 个依赖：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>org.mybatis.spring.boot<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>mybatis-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>2.1.1<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>mysql<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>mysql-connector-java<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>8.0.18<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>mybatis-spring-boot-starter 是 MyBatis 为 spring-boot 提供的启动器，添加后就可以以少量的配置来快速的使用 MyBatis；spring-boot-starter-web 是 spring-boot 提供的 Web 启动器，会给我们提供一个 Web 应用环境；mysql-connector-java 是 MySQL 数据库驱动依赖。</p>
+<h2 id="配置-1">配置</h2>
+<p>在 src/main/resources 有 spring-boot 提供的默认配置文件 application.properties。在该配置文件下，我们需要添加上对于的数据源配置。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 数据源配置，请修改为你项目的实际配置
+</span></span><span class="line"><span class="cl">spring.datasource.url=jdbc:mysql://localhost:3306/imooc
+</span></span><span class="line"><span class="cl">spring.datasource.username=root
+</span></span><span class="line"><span class="cl">spring.datasource.password=123456
+</span></span><span class="line"><span class="cl">spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="实践">实践</h2>
+<h3 id="模型层">模型层</h3>
+<p>在项目的 com.ahao.mybatis.springbootmybatisexample 的包下新建 model 包，并在该包下新建 User 类。如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Long</span> <span class="n">id</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Integer</span> <span class="n">age</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Integer</span> <span class="n">score</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 省略 getter 和 setter 方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>User 类与数据表 imooc_user 对应。</p>
+<h3 id="数据访问层">数据访问层</h3>
+<p>在 com.ahao.mybatis.springbootmybatisexample 包下新建 mapper 包，并新建 UserMapper 类。如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.ibatis.annotations.Mapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Mapper</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserMapper</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="控制层">控制层</h3>
+<p>在 com.ahao.mybatis.springbootmybatisexample 包下新建 controller 包，并新建 UserController 类。如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用 RestController 注解将 UserController 标记为控制器。</p>
+<h3 id="完善">完善</h3>
+<p>有了雏形后，我们再为这些类添加上具体的业务，比如查询所有 imooc_user 用户。</p>
+<ol>
+<li>
+<p>在 UserMapper 中，我们添加上 getUsers 接口方法，并通过 Select 注解来映射相应的 SQL 语句。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Mapper</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@Repository</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserMapper</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Select</span><span class="o">(</span><span class="s">&#34;SELECT * FROM imooc_user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>在 UserController 中，我们添加上对应的 getUsers API，该 API 对外暴露所有用户数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;/user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@GetMapping</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">getUsers</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h3 id="测试">测试</h3>
+<p>运行项目，如果你使用 IDE，可直接通过按钮来运行，如果没有也可使用终端来运行程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mvn spring-boot:run 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行成功后，我们测试一下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl 127.0.0.1:8080/user/
+</span></span><span class="line"><span class="cl">代码块1
+</span></span><span class="line"><span class="cl"><span class="o">[{</span><span class="s2">&#34;id&#34;</span>:1,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;peter&#34;</span>,<span class="s2">&#34;age&#34;</span>:18,<span class="s2">&#34;score&#34;</span>:100<span class="o">}</span>,
+</span></span><span class="line"><span class="cl"><span class="o">{</span><span class="s2">&#34;id&#34;</span>:2,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;pedro&#34;</span>,<span class="s2">&#34;age&#34;</span>:24,<span class="s2">&#34;score&#34;</span>:200<span class="o">}</span>,
+</span></span><span class="line"><span class="cl"><span class="o">{</span><span class="s2">&#34;id&#34;</span>:3,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;jerry&#34;</span>,<span class="s2">&#34;age&#34;</span>:28,<span class="s2">&#34;score&#34;</span>:500<span class="o">}]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="小结-1">小结</h2>
+<ul>
+<li>spring-boot 集成 MyBatis 是十分方便的，只需少量的配置就可轻松使用 MyBatis。</li>
+<li>spring-boot + MyBatis 几乎是国内标配，请务必要上手实操一下。</li>
+</ul>
+<h1 id="使用-mybatis-tk-和-pagehelper">使用 MyBatis-tk 和 pagehelper</h1>
+<h2 id="前言-2">前言</h2>
+<p>在 spring-boot 集成 MyBatis小节中，我们介绍了如何在 spring-boot 中集成 MyBatis，MyBatis 虽然灵活，但是对于业务开发还略显不够。tk.mapper 和 pagehelper 是国内开发者为 MyBatis 定制的两款业务增强库，tk.mapper 可以让开发者从基本的增删查改中解放，pagehelper 则提供了高度易用的分页功能。</p>
+<p>有了它们，MyBatis 可谓是如虎添翼，本小节我们将介绍这两款库的使用。</p>
+<h2 id="tkmapper">tk.mapper</h2>
+<h3 id="简介">简介</h3>
+<p>在 tk.mapper 项目的首页有关于它最精确的介绍。</p>
+<blockquote>
+<p>通用 mapper 是一个可以实现任意 MyBatis 通用方法的框架，项目提供了常规的增删改查操作以及 example 相关的单表操作。通用 mapper 是为了解决 MyBatis 使用中 90% 的基本操作，使用它可以很方便的进行开发，可以节省开发人员大量的时间。</p>
+</blockquote>
+<p>总结来说，tk.mapper 可以为 MyBatis 开发节省大量的时间，精简的 90% 的基本操作。</p>
+<h3 id="依赖">依赖</h3>
+<p>tk.mapper 的使用也十分简单，我们只需引入相应的 starter 即可。如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>tk.mybatis<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>mapper-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>2.1.5<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><strong>TIPS：</strong> 注意，引入了 mapper starter 后，虽然和 MyBatis 官方的 starter 没有冲突，但是官方的自动配置不会生效！</p>
+</blockquote>
+<h3 id="使用-1">使用</h3>
+<p>简单地说，tk.mapper 会给普通的 mapper 做一些增强，让 mapper 具有基本的增删查改的能力。如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">tk.mybatis.mapper.common.BaseMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Mapper</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@Repository</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserMapper</span> <span class="kd">extends</span> <span class="n">BaseMapper</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Select</span><span class="o">(</span><span class="s">&#34;SELECT * FROM imooc_user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>UserMapper 是原有的 mapper，只需继承 tk.mapper 中的 BaseMapper 就完成的增强。</p>
+<p>UserMapper 继承 BaseMapper 后就拥有了基础的增删查改功能，而无需写 SQL。BaseMapper 必须指定一个与 UserMapper 对应的模型类，即 User 类。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.ahao.mybatis.springbootmybatisexample.model</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.persistence.Table</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.Serializable</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Table</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;imooc_user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Long</span> <span class="n">id</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Integer</span> <span class="n">age</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Integer</span> <span class="n">score</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 省略 getter 和 setter 方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>数据表的名称为 imooc_user，这里我们通过 Table 注解来告诉 tk User 模型所对应的数据表。</p>
+<p>mapper 增强后，我们还需要给 SpringbootMybatisExampleApplication 启动类添加上一个注解：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">tk.mybatis.spring.annotation.MapperScan</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@SpringBootApplication</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@MapperScan</span><span class="o">(</span><span class="s">&#34;com.ahao.mybatis.springbootmybatisexample.mapper&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SpringbootMybatisExampleApplication</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">SpringbootMybatisExampleApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>MapperScan 是 tk 提供的一个 mapper 扫描注解，在注解中我们需要填入 mapper 所在的包路径，即 com.ahao.mybatis.springbootmybatisexample.mapper。</p>
+<p>到此 UserMapper 增强已经完成了，我们尝试在 UserController 中使用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;/user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@GetMapping</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// return userMapper.getUsers();
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">selectAll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在这里，我们替换 getUsers 方法，而是使用了 selectAll 方法，selectAll 是 BaseMapper 提供的方法，也就是增强的方法，我们无需去为这个方法添加相应的 SQL，tk 会自动帮我们搭理好一切。</p>
+<p>再次运行程序，并测试接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># curl 127.0.0.1:8080/user/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[{</span><span class="s2">&#34;id&#34;</span>:1,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;peter&#34;</span>,<span class="s2">&#34;age&#34;</span>:18,<span class="s2">&#34;score&#34;</span>:100<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:2,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;pedro&#34;</span>,<span class="s2">&#34;age&#34;</span>:24,<span class="s2">&#34;score&#34;</span>:200<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:3,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;jerry&#34;</span>,<span class="s2">&#34;age&#34;</span>:28,<span class="s2">&#34;score&#34;</span>:500<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:4,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;mike&#34;</span>,<span class="s2">&#34;age&#34;</span>:12,<span class="s2">&#34;score&#34;</span>:300<span class="o">}]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们得到了与之前一样的结果，可以看到在我们并未书写任何 SQL 的前提下， tk.mapper 自动帮我们生成了需要的 SQL 查询，这就是 tk.mapper 所带来的简化开发能力。</p>
+<h2 id="pagehelper">pagehelper</h2>
+<h3 id="简介-1">简介</h3>
+<p>pagehelper 是一个 方便好用的 MyBatis 分页插件，支持复杂的单表、多表分页，是目前 MyBatis 中使用最为广泛的插件之一。</p>
+<h3 id="依赖-1">依赖</h3>
+<p>和其它一样，pagehelper 也只需导入相应的启动器即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>com.github.pagehelper<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>pagehelper-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>1.2.13<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用-2">使用</h3>
+<p>pagehelper 充分的简单易用，在 UserController 中只需添加一行代码即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.github.pagehelper.PageHelper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;/user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@GetMapping</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PageHelper</span><span class="o">.</span><span class="na">startPage</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">2</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">selectAll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>PageHelper.startPage(1, 2)</code>会自动拦截后面将要执行的 SQL，然后处理该 SQL 并添加分页参数。startPage 接收两个参数，第一个参数表示当前分页，第二个参数表示分页数目，如这里的 1，2 表示第一页且该页最多有两条记录。</p>
+<p>运行程序，并测试接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># curl 127.0.0.1:8080/user/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[{</span><span class="s2">&#34;id&#34;</span>:1,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;peter&#34;</span>,<span class="s2">&#34;age&#34;</span>:18,<span class="s2">&#34;score&#34;</span>:100<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:2,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;pedro&#34;</span>,<span class="s2">&#34;age&#34;</span>:24,<span class="s2">&#34;score&#34;</span>:200<span class="o">}]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>与上面的结果相比，结果的数目只有两条，显然分页插件已经生效。</p>
+<blockquote>
+<p><strong>TIPS:</strong> 提示，pagehelper 的分页是从<code>1</code>开始的，而有些分页插件分页是从<code>0</code>开始的。</p>
+</blockquote>
+<h2 id="小结-2">小结</h2>
+<ul>
+<li>有了 spring-boot 后，很多项目的开发都将变得简单，mapper 和 pagehelper 都只需添加一个依赖即可使用。</li>
+<li>本小节简单的介绍了 mapper 和 pagehelper，如果你想深入了解它们，可以阅读它们的文档：<a class="link" href="https://github.com/pagehelper/Mybatis-PageHelper/blob/master/wikis/en/HowToUse.md"  target="_blank" rel="noopener"
+    >pagehelper</a>，<a class="link" href="https://gitee.com/free/Mapper/wikis/Home"  target="_blank" rel="noopener"
+    >mapper</a>。</li>
+</ul>
+<h1 id="使用-mybatis-plus">使用 MyBatis-plus</h1>
+<h2 id="前言-3">前言</h2>
+<p>在spring-boot 集成 MyBatis小节中，我们介绍了如何在 spring-boot 中集成 MyBatis，MyBatis 虽然灵活，但是对于业务开发还略显不够。MyBatis-Plus 是国内开发者为 MyBatis 定制的一款增强工具，在不侵入 MyBatis 的基础上能够快速地提升 MyBatis 的开发能力，为开发者节省大量的时间。</p>
+<h2 id="简介-2">简介</h2>
+<p>MyBatis-Plus（简称 MP）是一个 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。</p>
+<p>MyBatis-Plus 内置丰富的基础 mapper 和插件，是目前国内使用最为广泛的开源项目之一。</p>
+<h2 id="依赖-2">依赖</h2>
+<p>在 spring-boot 的基础上，使用 MyBatis-Plus 也十分简单，只需在 pom 文件中添加上对应的 starter 即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>com.baomidou<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>mybatis-plus-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>3.3.1.tmp<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="准备-1">准备</h2>
+<p>MP 提供了十分方便的 BaseMapper 供项目 mapper 继承，如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.ahao.mybatis.springbootmybatisexample.mapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.core.mapper.BaseMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.ahao.mybatis.springbootmybatisexample.model.User</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.ibatis.annotations.Mapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.ibatis.annotations.Select</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.stereotype.Repository</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Mapper</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@Repository</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserMapper</span> <span class="kd">extends</span> <span class="n">BaseMapper</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@Select</span><span class="o">(</span><span class="s">&#34;SELECT * FROM imooc_user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>UserMapper 继承 BaseMapper 后就拥有了基础的增删查改功能，而无需写 SQL。BaseMapper 必须指定一个与 UserMapper 对应的模型类，即 User 类。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.ahao.mybatis.springbootmybatisexample.model</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.annotation.TableId</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.annotation.TableName</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.Serializable</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@TableName</span><span class="o">(</span><span class="s">&#34;imooc_user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@TableId</span><span class="o">(</span><span class="s">&#34;id&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Long</span> <span class="n">id</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">String</span> <span class="n">username</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Integer</span> <span class="n">age</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">Integer</span> <span class="n">score</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 省略诸多 getter 和 setter 方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在模型类中，我们需要通过 TableName 注解指定模型对于的数据表名称，并通过 TableId 注解指定数据表字段。</p>
+<p>并在 SpringbootMybatisExampleApplication 启动类上添加 MapperScan 注解来扫描 mapper，如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.mybatis.spring.annotation.MapperScan</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.boot.SpringApplication</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@SpringBootApplication</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@MapperScan</span><span class="o">(</span><span class="s">&#34;com.ahao.mybatis.springbootmybatisexample.mapper&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SpringbootMybatisExampleApplication</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">SpringbootMybatisExampleApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>MapperScan 中需填入 mapper 所在的包路径，即 com.ahao.mybatis.springbootmybatisexample.mapper。</p>
+<h2 id="使用-3">使用</h2>
+<h3 id="基础使用">基础使用</h3>
+<p>接下来，我们在 UserController 中来使用增强后的 UserMapper。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.ahao.mybatis.springbootmybatisexample.controller</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.ahao.mybatis.springbootmybatisexample.mapper.UserMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.ahao.mybatis.springbootmybatisexample.model.User</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.GetMapping</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestMapping</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;/user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@GetMapping</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// return userMapper.getUsers();
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">selectList</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里，我们替换了之前使用的 getUsers 方法，而是使用了 BaseMapper 提供的 selectList 方法，该方法接收一个参数，这里我们暂时定为 null。</p>
+<p>运行程序，并通过 curl 测试接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># curl 127.0.0.1:8080/user/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[{</span><span class="s2">&#34;id&#34;</span>:1,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;peter&#34;</span>,<span class="s2">&#34;age&#34;</span>:18,<span class="s2">&#34;score&#34;</span>:100<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:2,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;pedro&#34;</span>,<span class="s2">&#34;age&#34;</span>:24,<span class="s2">&#34;score&#34;</span>:200<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:3,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;jerry&#34;</span>,<span class="s2">&#34;age&#34;</span>:28,<span class="s2">&#34;score&#34;</span>:500<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:4,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;mike&#34;</span>,<span class="s2">&#34;age&#34;</span>:12,<span class="s2">&#34;score&#34;</span>:300<span class="o">}]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们仍然取得了与之前一样的结果。可以看到，MP 在增强 UserMapper 后，我们无需再写多余的 SQL，MP 自动的为我们生成了对应的 SQL 语句。</p>
+<h3 id="进阶使用">进阶使用</h3>
+<p>MP 的功能远不止如此简单，我们还可以通过 Java API 给 selectList 函数传入 SQL 筛选条件。如，我们只想获取分数大于 200 分的用户。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;/user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@GetMapping</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">QueryWrapper</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">condition</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueryWrapper</span><span class="o">&lt;&gt;();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">condition</span><span class="o">.</span><span class="na">lambda</span><span class="o">().</span><span class="na">gt</span><span class="o">(</span><span class="n">User</span><span class="o">::</span><span class="n">getScore</span><span class="o">,</span> <span class="n">200</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">selectList</span><span class="o">(</span><span class="n">condition</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>QueryWrapper 是 MP 提供的查询条件包装器，通过 Java API 的方式我们就可以构造 SQL 过滤条件。如这里我们通过 lamdba 表示式构造了用户积分需大于200的过滤条件，然后将包装器以参数的形式传递给 selectList 函数。</p>
+<p>再次运行程序，并通过 curl 测试接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># curl 127.0.0.1:8080/user/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[{</span><span class="s2">&#34;id&#34;</span>:3,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;jerry&#34;</span>,<span class="s2">&#34;age&#34;</span>:28,<span class="s2">&#34;score&#34;</span>:500<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:4,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;mike&#34;</span>,<span class="s2">&#34;age&#34;</span>:12,<span class="s2">&#34;score&#34;</span>:300<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:5,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;tom&#34;</span>,<span class="s2">&#34;age&#34;</span>:27,<span class="s2">&#34;score&#34;</span>:1000<span class="o">}]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从结果中，可以看出积分小于200的用户都已经被过滤掉了。</p>
+<h3 id="分页插件">分页插件</h3>
+<p>MP 内置提供了分页插件，只需几行代码我们就可直接引入。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@SpringBootApplication</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@MapperScan</span><span class="o">(</span><span class="s">&#34;com.ahao.mybatis.springbootmybatisexample.mapper&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SpringbootMybatisExampleApplication</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Bean</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">PaginationInterceptor</span> <span class="nf">paginationInterceptor</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">new</span> <span class="n">PaginationInterceptor</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">SpringbootMybatisExampleApplication</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 SpringbootMybatisExampleApplication 启动类中，我们添加了一个带有 Bean 注解的 paginationInterceptor 方法，该方法返回一个 PaginationInterceptor 对象，这样插件就配置完成了。</p>
+<p>接下来，我们来使用它。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.extension.plugins.pagination.Page</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;/user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">UserMapper</span> <span class="n">userMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@GetMapping</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUsers</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Page</span> <span class="n">page</span> <span class="o">=</span> <span class="n">userMapper</span><span class="o">.</span><span class="na">selectPage</span><span class="o">(</span><span class="k">new</span> <span class="n">Page</span><span class="o">&lt;&gt;(</span><span class="n">1</span><span class="o">,</span> <span class="n">3</span><span class="o">),</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">page</span><span class="o">.</span><span class="na">getRecords</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>UserMapper 的 selectPage 方法接受两个参数，第一个参数是分页配置，第二个参数是查询条件包装器。这里第一个参数，我们直接通过 Page 构造函数来构造，1 表示当前页，3 表示分页最大的记录数，即第一页且最多返回三条记录；第二个参数我们直接设置为 null。</p>
+<p>运行程序，并通过 curl 测试接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># curl 127.0.0.1:8080/user/</span>
+</span></span><span class="line"><span class="cl"><span class="o">[{</span><span class="s2">&#34;id&#34;</span>:1,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;peter&#34;</span>,<span class="s2">&#34;age&#34;</span>:18,<span class="s2">&#34;score&#34;</span>:100<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:2,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;pedro&#34;</span>,<span class="s2">&#34;age&#34;</span>:24,<span class="s2">&#34;score&#34;</span>:200<span class="o">}</span>,<span class="o">{</span><span class="s2">&#34;id&#34;</span>:3,<span class="s2">&#34;username&#34;</span>:<span class="s2">&#34;jerry&#34;</span>,<span class="s2">&#34;age&#34;</span>:28,<span class="s2">&#34;score&#34;</span>:500<span class="o">}]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从结果可以看出，分页生效了，记录总数却是为 3 条。</p>
+<h2 id="小结-3">小结</h2>
+<ul>
+<li>MyBatis-Plus 是国内使用十分广泛的一款 ORM 库，极大的节省了开发者的开发时间，功能强大且使用简单。</li>
+<li>MyBatis-Plus 的内容还是较多的，如果你感兴趣，不妨访问它的<a class="link" href="https://mybatis.plus/"  target="_blank" rel="noopener"
+    >官网</a>看一看。</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 2022年3月17日 11:59 CST
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-contents--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-contents">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/posts/mybatisplusspringboot%E7%89%88--2022/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/1.jpg" loading="lazy" data-key="" data-hash="/1.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MyBatisPlus(SpringBoot版)--2022</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/mybatis-%E5%88%9D%E7%BA%A7%E7%AF%87/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/18.png" loading="lazy" data-key="" data-hash="/18.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MyBatis 初级篇</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/mybatis-%E9%AB%98%E7%BA%A7%E7%AF%87/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/19.jpg" loading="lazy" data-key="" data-hash="/19.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MyBatis 高级篇</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+<div id="waline" class="waline-container"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+    .waline-container .vcount {
+        color: var(--card-text-color-main);
+    }
+</style><script>
+    
+    new Waline({"dark":"html[data-scheme=\"dark\"]","el":"#waline","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili","https://cdn.jsdelivr.net/gh/walinejs/emojis/qq","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus"],"lang":"zh-CN","locale":{"admin":"Admin"},"requiredMeta":["name","email","url"],"serverURL":"https://blog-api-2w7xkqg6y-ahaomin.vercel.app/","visitor":true});
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ahao&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.10.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#准备">准备</a>
+      <ol>
+        <li><a href="#添加依赖">添加依赖</a></li>
+        <li><a href="#redis服务器">Redis服务器</a></li>
+        <li><a href="#redis配置文件">Redis配置文件</a></li>
+      </ol>
+    </li>
+    <li><a href="#使用">使用</a>
+      <ol>
+        <li><a href="#配置">配置</a></li>
+        <li><a href="#调用">调用</a></li>
+      </ol>
+    </li>
+    <li><a href="#小结">小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#前言-1">前言</a></li>
+    <li><a href="#项目初始化">项目初始化</a></li>
+    <li><a href="#启动器">启动器</a></li>
+    <li><a href="#配置-1">配置</a></li>
+    <li><a href="#实践">实践</a>
+      <ol>
+        <li><a href="#模型层">模型层</a></li>
+        <li><a href="#数据访问层">数据访问层</a></li>
+        <li><a href="#控制层">控制层</a></li>
+        <li><a href="#完善">完善</a></li>
+        <li><a href="#测试">测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#小结-1">小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#前言-2">前言</a></li>
+    <li><a href="#tkmapper">tk.mapper</a>
+      <ol>
+        <li><a href="#简介">简介</a></li>
+        <li><a href="#依赖">依赖</a></li>
+        <li><a href="#使用-1">使用</a></li>
+      </ol>
+    </li>
+    <li><a href="#pagehelper">pagehelper</a>
+      <ol>
+        <li><a href="#简介-1">简介</a></li>
+        <li><a href="#依赖-1">依赖</a></li>
+        <li><a href="#使用-2">使用</a></li>
+      </ol>
+    </li>
+    <li><a href="#小结-2">小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#前言-3">前言</a></li>
+    <li><a href="#简介-2">简介</a></li>
+    <li><a href="#依赖-2">依赖</a></li>
+    <li><a href="#准备-1">准备</a></li>
+    <li><a href="#使用-3">使用</a>
+      <ol>
+        <li><a href="#基础使用">基础使用</a></li>
+        <li><a href="#进阶使用">进阶使用</a></li>
+        <li><a href="#分页插件">分页插件</a></li>
+      </ol>
+    </li>
+    <li><a href="#小结-3">小结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

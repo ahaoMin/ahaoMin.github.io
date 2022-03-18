@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Redis 主从同步 主从同步（主从复制）是 Redis 高可用服务的基石，也是多机运行中最基础的一个。我们把主要存储数据的节点叫做主节点 (master），把其他通过复制主节点数据的副本节点叫做从节点 (slave），如下图所示：
+在 Redis 中一个主节点可以拥有多个从节点，一个从节点也可以是其他服务器的主节点，如下图所示：
+主从同步的优点 主从同步具有以下三个优点：
+ 性能方面：有了主从同步之后，可以把查询任务分配给从服务器，用主服务器来执行写操作，这样极大的提高了程序运行的效率，把所有压力分摊到各个服务器了； 高可用：当有了主从同步之后，当主服务器节点宕机之后，可以很迅速的把从节点提升为主节点，为 Redis 服务器的宕机恢复节省了宝贵的时间； 防止数据丢失：当主服务器磁盘坏掉之后，其他从服务器还保留着相关的数据，不至于数据全部丢失。  既然主从同步有这么多的优点，那接下来我们来看如何开启和使用主从同步功能。
+开启主从同步 运行中设置从服务器 在 Redis 运行过程中，我们可以使用 replicaof host port 命令，把自己设置为目标 IP 的从服务器，执行命令如下：
+1 2  127.0.0.1:6379&amp;gt; replicaof 127.0.0.1 6380 OK   如果主服务设置了密码，需要在从服务器输入主服务器的密码，使用 config set masterauth 主服务密码 命令的方式，例如：
+1 2  127.0.0.1:6377&amp;gt; config set masterauth pwd654321 OK   1. 执行流程
+在执行完 replicaof 命令之后，从服务器的数据会被清空，主服务会把它的数据副本同步给从服务器。
+2. 测试同步功能
+主从服务器设置完同步之后，我们来测试一下主从数据同步，首先我们先在主服务器上执行保存数据操作，再去从服务器查询。
+主服务器执行命令：
+1 2  127.'><title>Redis 高可用方式</title>
+
+<link rel='canonical' href='https://ahao.ink/posts/redis-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E5%BC%8F/'>
+
+<link rel="stylesheet" href="/scss/style.min.baba905ab2d1209de74a1930c487a8a663c37860af6aa1c26588d298bf620306.css"><meta property='og:title' content='Redis 高可用方式'>
+<meta property='og:description' content='Redis 主从同步 主从同步（主从复制）是 Redis 高可用服务的基石，也是多机运行中最基础的一个。我们把主要存储数据的节点叫做主节点 (master），把其他通过复制主节点数据的副本节点叫做从节点 (slave），如下图所示：
+在 Redis 中一个主节点可以拥有多个从节点，一个从节点也可以是其他服务器的主节点，如下图所示：
+主从同步的优点 主从同步具有以下三个优点：
+ 性能方面：有了主从同步之后，可以把查询任务分配给从服务器，用主服务器来执行写操作，这样极大的提高了程序运行的效率，把所有压力分摊到各个服务器了； 高可用：当有了主从同步之后，当主服务器节点宕机之后，可以很迅速的把从节点提升为主节点，为 Redis 服务器的宕机恢复节省了宝贵的时间； 防止数据丢失：当主服务器磁盘坏掉之后，其他从服务器还保留着相关的数据，不至于数据全部丢失。  既然主从同步有这么多的优点，那接下来我们来看如何开启和使用主从同步功能。
+开启主从同步 运行中设置从服务器 在 Redis 运行过程中，我们可以使用 replicaof host port 命令，把自己设置为目标 IP 的从服务器，执行命令如下：
+1 2  127.0.0.1:6379&amp;gt; replicaof 127.0.0.1 6380 OK   如果主服务设置了密码，需要在从服务器输入主服务器的密码，使用 config set masterauth 主服务密码 命令的方式，例如：
+1 2  127.0.0.1:6377&amp;gt; config set masterauth pwd654321 OK   1. 执行流程
+在执行完 replicaof 命令之后，从服务器的数据会被清空，主服务会把它的数据副本同步给从服务器。
+2. 测试同步功能
+主从服务器设置完同步之后，我们来测试一下主从数据同步，首先我们先在主服务器上执行保存数据操作，再去从服务器查询。
+主服务器执行命令：
+1 2  127.'>
+<meta property='og:url' content='https://ahao.ink/posts/redis-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E5%BC%8F/'>
+<meta property='og:site_name' content='ahao&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-09-26T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-17T12:00:22&#43;08:00'/><meta property='og:image' content='https://ahao.ink/24.jpg' />
+<meta name="twitter:title" content="Redis 高可用方式">
+<meta name="twitter:description" content="Redis 主从同步 主从同步（主从复制）是 Redis 高可用服务的基石，也是多机运行中最基础的一个。我们把主要存储数据的节点叫做主节点 (master），把其他通过复制主节点数据的副本节点叫做从节点 (slave），如下图所示：
+在 Redis 中一个主节点可以拥有多个从节点，一个从节点也可以是其他服务器的主节点，如下图所示：
+主从同步的优点 主从同步具有以下三个优点：
+ 性能方面：有了主从同步之后，可以把查询任务分配给从服务器，用主服务器来执行写操作，这样极大的提高了程序运行的效率，把所有压力分摊到各个服务器了； 高可用：当有了主从同步之后，当主服务器节点宕机之后，可以很迅速的把从节点提升为主节点，为 Redis 服务器的宕机恢复节省了宝贵的时间； 防止数据丢失：当主服务器磁盘坏掉之后，其他从服务器还保留着相关的数据，不至于数据全部丢失。  既然主从同步有这么多的优点，那接下来我们来看如何开启和使用主从同步功能。
+开启主从同步 运行中设置从服务器 在 Redis 运行过程中，我们可以使用 replicaof host port 命令，把自己设置为目标 IP 的从服务器，执行命令如下：
+1 2  127.0.0.1:6379&amp;gt; replicaof 127.0.0.1 6380 OK   如果主服务设置了密码，需要在从服务器输入主服务器的密码，使用 config set masterauth 主服务密码 命令的方式，例如：
+1 2  127.0.0.1:6377&amp;gt; config set masterauth pwd654321 OK   1. 执行流程
+在执行完 replicaof 命令之后，从服务器的数据会被清空，主服务会把它的数据副本同步给从服务器。
+2. 测试同步功能
+主从服务器设置完同步之后，我们来测试一下主从数据同步，首先我们先在主服务器上执行保存数据操作，再去从服务器查询。
+主服务器执行命令：
+1 2  127."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ahao.ink/24.jpg' />
+    <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐷</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ahao&#39;s Blog</a></h1>
+            <h2 class="site-description">道阻且长，行则将至</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页 / Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档 / Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索 / Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于 / About</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/posts/redis-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E5%BC%8F/">
+                
+                    <img src="/24.jpg" loading="lazy" alt="Featured image of post Redis 高可用方式" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" >
+                Redis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/redis-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E5%BC%8F/">Redis 高可用方式</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2021年9月26日</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 12 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="redis-主从同步">Redis 主从同步</h1>
+<p>主从同步（主从复制）是 Redis 高可用服务的基石，也是多机运行中最基础的一个。我们把主要存储数据的节点叫做主节点 (master），把其他通过复制主节点数据的副本节点叫做从节点 (slave），如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/PJNIuYQb3S7GBCt.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="主从同步.png"
+	
+	
+></p>
+<p>在 Redis 中一个主节点可以拥有多个从节点，一个从节点也可以是其他服务器的主节点，如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/bIfMaL4PTVvt5dB.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="主从同步-从从模式.png"
+	
+	
+></p>
+<h2 id="主从同步的优点">主从同步的优点</h2>
+<p>主从同步具有以下三个优点：</p>
+<ul>
+<li>性能方面：有了主从同步之后，可以把查询任务分配给从服务器，用主服务器来执行写操作，这样极大的提高了程序运行的效率，把所有压力分摊到各个服务器了；</li>
+<li>高可用：当有了主从同步之后，当主服务器节点宕机之后，可以很迅速的把从节点提升为主节点，为 Redis 服务器的宕机恢复节省了宝贵的时间；</li>
+<li>防止数据丢失：当主服务器磁盘坏掉之后，其他从服务器还保留着相关的数据，不至于数据全部丢失。</li>
+</ul>
+<p>既然主从同步有这么多的优点，那接下来我们来看如何开启和使用主从同步功能。</p>
+<h2 id="开启主从同步">开启主从同步</h2>
+<h3 id="运行中设置从服务器"><strong>运行中设置从服务器</strong></h3>
+<p>在 Redis 运行过程中，我们可以使用 <code>replicaof host port</code> 命令，把自己设置为目标 IP 的从服务器，执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:6379&gt; replicaof 127.0.0.1 <span class="m">6380</span>
+</span></span><span class="line"><span class="cl">OK
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果主服务设置了密码，需要在从服务器输入主服务器的密码，使用 <code>config set masterauth 主服务密码</code> 命令的方式，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:6377&gt; config <span class="nb">set</span> masterauth pwd654321
+</span></span><span class="line"><span class="cl">OK
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>1. 执行流程</strong></p>
+<p>在执行完 replicaof 命令之后，从服务器的数据会被清空，主服务会把它的数据副本同步给从服务器。</p>
+<p><strong>2. 测试同步功能</strong></p>
+<p>主从服务器设置完同步之后，我们来测试一下主从数据同步，首先我们先在主服务器上执行保存数据操作，再去从服务器查询。</p>
+<p>主服务器执行命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:6379&gt; <span class="nb">set</span> lang redis
+</span></span><span class="line"><span class="cl">OK
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从服务执行查询：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:6379&gt; get lang
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;redis&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出数据已经被正常同步过来了。</p>
+<h3 id="启动时设置从服务器"><strong>启动时设置从服务器</strong></h3>
+<p>我们可以使用命令 <code>redis-server --port 6380 --replicaof 127.0.0.1 6379</code> 将自己设置成目标服务器的从服务器。</p>
+<h2 id="数据同步">数据同步</h2>
+<h3 id="完整数据同步"><strong>完整数据同步</strong></h3>
+<p>当有新的从服务器连接时，为了保障多个数据库的一致性，主服务器会执行一次 bgsave 命令生成一个 RDB 文件，然后再以 Socket 的方式发送给从服务器，从服务器收到 RDB 文件之后再把所有的数据加载到自己的程序中，就完成了一次全量的数据同步。</p>
+<h3 id="部分数据同步"><strong>部分数据同步</strong></h3>
+<p>在 Redis 2.8 之前每次从服务器离线再重新上线之前，主服务器会进行一次完整的数据同步，然后这种情况如果发生在离线时间比较短的情况下，只有少量的数据不同步却要同步所有的数据是非常笨拙和不划算的，在 Redis 2.8 这个功能得到了优化。</p>
+<p>Redis 2.8 的优化方法是当从服务离线之后，主服务器会把离线之后的写入命令，存储在一个特定大小的队列中，队列是可以保证先进先出的执行顺序的，当从服务器重写恢复上线之后，主服务会判断离线这段时间内的命令是否还在队列中，如果在就直接把队列中的数据发送给从服务器，这样就避免了完整同步的资源浪费。</p>
+<blockquote>
+<p>小贴士：存储离线命令的队列大小默认是 1MB，使用者可以自行修改队列大小的配置项 repl-backlog-size。</p>
+</blockquote>
+<h3 id="无盘数据同步"><strong>无盘数据同步</strong></h3>
+<p>从前面的内容我们可以得知，在第一次主从连接的时候，会先产生一个 RDB 文件，再把 RDB 文件发送给从服务器，如果主服务器是非固态硬盘的时候，系统的 I/O 操作是非常高的，为了缓解这个问题，Redis 2.8.18 新增了无盘复制功能，无盘复制功能不会在本地创建 RDB 文件，而是会派生出一个子进程，然后由子进程通过 Socket 的方式，直接将 RDB 文件写入到从服务器，这样主服务器就可以在不创建RDB文件的情况下，完成与从服务器的数据同步。</p>
+<p>要使用无须复制功能，只需把配置项 repl-diskless-sync 的值设置为 yes 即可，它默认配置值为 no。</p>
+<h2 id="查询服务器的角色">查询服务器的角色</h2>
+<p>我们使用 role 命令，来查询当前服务器的主从角色信息。</p>
+<h3 id="主服务查看"><strong>主服务查看</strong></h3>
+<p>在主服务器上执行 role 结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:6379&gt; role
+</span></span><span class="line"><span class="cl">1<span class="o">)</span> <span class="s2">&#34;master&#34;</span>
+</span></span><span class="line"><span class="cl">2<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">546</span>
+</span></span><span class="line"><span class="cl">3<span class="o">)</span> 1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;172.17.0.1&#34;</span>
+</span></span><span class="line"><span class="cl">      2<span class="o">)</span> <span class="s2">&#34;6379&#34;</span>
+</span></span><span class="line"><span class="cl">      3<span class="o">)</span> <span class="s2">&#34;546&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>master 表示主服务器，底下是从服务器的 IP、端口和连接时间。</p>
+<h3 id="从服务器查看"><strong>从服务器查看</strong></h3>
+<p>在从服务器执行 role 命令，执行结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:6379&gt; role
+</span></span><span class="line"><span class="cl">1<span class="o">)</span> <span class="s2">&#34;slave&#34;</span>
+</span></span><span class="line"><span class="cl">2<span class="o">)</span> <span class="s2">&#34;192.168.1.71&#34;</span>
+</span></span><span class="line"><span class="cl">3<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">6380</span>
+</span></span><span class="line"><span class="cl">4<span class="o">)</span> <span class="s2">&#34;connected&#34;</span>
+</span></span><span class="line"><span class="cl">5<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">14</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>slave 表示从服务器，底下主服务器的 IP、端口和连接时间。</p>
+<h2 id="关闭主从同步">关闭主从同步</h2>
+<p>我们可以使用 <code>replicaof no one</code> 命令来停止从服务器的复制，操作命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:6379&gt; role <span class="c1">#查询当前角色</span>
+</span></span><span class="line"><span class="cl">1<span class="o">)</span> <span class="s2">&#34;slave&#34;</span> <span class="c1">#从服务器</span>
+</span></span><span class="line"><span class="cl">2<span class="o">)</span> <span class="s2">&#34;192.168.1.71&#34;</span>
+</span></span><span class="line"><span class="cl">3<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">6380</span>
+</span></span><span class="line"><span class="cl">4<span class="o">)</span> <span class="s2">&#34;connected&#34;</span>
+</span></span><span class="line"><span class="cl">5<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">14</span>
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; replicaof no one <span class="c1">#关闭同步</span>
+</span></span><span class="line"><span class="cl">OK
+</span></span><span class="line"><span class="cl">127.0.0.1:6379&gt; role <span class="c1">#查询当前角色</span>
+</span></span><span class="line"><span class="cl">1<span class="o">)</span> <span class="s2">&#34;master&#34;</span> <span class="c1">#主服务器</span>
+</span></span><span class="line"><span class="cl">2<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">1097</span>
+</span></span><span class="line"><span class="cl">3<span class="o">)</span> <span class="o">(</span>empty list or <span class="nb">set</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出执行了 <code>replicaof no one</code> 命令之后，自己就从服务器变成主服务器了。</p>
+<blockquote>
+<p>小贴士：服务器类型的转换并不会影响数据，这台服务器的数据将会被保留。</p>
+</blockquote>
+<h2 id="注意事项">注意事项</h2>
+<p>主从同步有一些需要注意的点，我们来看一下。</p>
+<h3 id="数据一致性问题"><strong>数据一致性问题</strong></h3>
+<p>当从服务器已经完成和主服务的数据同步之后，再新增的命令会以异步的方式发送至从服务器，在这个过程中主从同步会有短暂的数据不一致，如在这个异步同步发生之前主服务器宕机了，会造成数据不一致。</p>
+<h3 id="从服务器只读性"><strong>从服务器只读性</strong></h3>
+<p>默认在情况下，处于复制模式的主服务器既可以执行写操作也可以执行读操作，而从服务器则只能执行读操作。</p>
+<p>可以在从服务器上执行 <code>config set replica-read-only no</code> 命令，使从服务器开启写模式，但需要注意以下几点：</p>
+<ul>
+<li>在从服务器上写的数据不会同步到主服务器；</li>
+<li>当键值相同时主服务器上的数据可以覆盖从服务器；</li>
+<li>在进行完整数据同步时，从服务器数据会被清空。</li>
+</ul>
+<h3 id="复制命令的变化"><strong>复制命令的变化</strong></h3>
+<p>Redis 5.0 之前使用的复制命令是 slaveof，在 Redis 5.0 之后复制命令才被改为 replicaof，在高版本（Redis 5+）中我们应该尽量使用 replicaof，因为 slaveof 命令可能会被随时废弃掉。</p>
+<h2 id="小结">小结</h2>
+<p>本文我们了解了 Redis 多机运行的基础功能主从同步，主从同步可以通过 <code>replicaof host port</code> 命令开启，知道了同步的三种方式：完整数据同步（第一次全量 RDB 同步），部分数据同步（Redis 2.8 对于短时间离线的同步功能优化），无盘同步（非 RDB 生成的方式同步数据），我们也可以使用 <code>replicaof no one</code> 命令来停止从服务器的复制功能。</p>
+<h1 id="redis-哨兵模式">Redis 哨兵模式</h1>
+<p>主从复制模式，它是属于 Redis 多机运行的基础，但这种模式本身存在一个致命的问题，当主节点奔溃之后，需要人工干预才能恢复 Redis 的正常使用。</p>
+<p>例如，我们有 3 台服务器做了主从复制，一个主服务器 A 和两个从服务器 B、C，当 A 发生故障之后，需要人工把 B 服务器设置为主服务器，同时再去 C 服务器设置成从服务器并且从主服务器 B 同步数据，如果是发生在晚上或者从服务器节点很多的情况下，对于人工来说想要立即实现恢复的难度很多，所以我们需要一个自动的工具——Redis Sentinel（哨兵模式）来把手动的过程变成自动的，让 Redis 拥有自动容灾恢复（failover）的能力。</p>
+<p>哨兵模式如下所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/PQnbiIoKjm3dwgl.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="哨兵模式.png"
+	
+	
+></p>
+<blockquote>
+<p>小贴士：Redis Sentinel 的最小分配单位是一主一从。</p>
+</blockquote>
+<h2 id="redis-sentinel-搭建">Redis Sentinel 搭建</h2>
+<p>Redis 官方提供了 Redis Sentinel 的功能，它的运行程序保存在 src 目录下，如图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/WQhNEynwb1RUClv.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+></p>
+<p>我们需要使用命令 <code>./src/redis-sentinel sentinel.conf</code> 来启动 Sentinel，可以看出我们在启动它时必须设置一个 sentinel.conf 文件，这个配置文件中必须包含监听的主节点信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sentinel monitor master-name ip port quorum
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sentinel monitor mymaster 127.0.0.1 6379 1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中：</p>
+<ul>
+<li>master-name 表示给监视的主节点起一个名称；</li>
+<li>ip 表示主节点的 IP；</li>
+<li>port 表示主节点的端口；</li>
+<li>quorum 表示确认主节点下线的 Sentinel 数量，如果 quorum 设置为 1 表示只要有一台 Sentinel 判断它下线了，就可以确认它真的下线了。</li>
+</ul>
+<p>注意：如果主节点 Redis 服务器有密码，还必须在 sentinel.conf 中添加主节点的密码，不然会导致 Sentinel 不能自动监听到主节点下面的从节点。</p>
+<p>所以如果 Redis 有密码，sentinel.conf 必须包含以下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sentinel monitor mymaster 127.0.0.1 6379 1
+</span></span><span class="line"><span class="cl">sentinel auth-pass mymaster pwd654321
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当我们配置好 sentinel.conf 并执行启动命令 <code>./src/redis-sentinel sentinel.conf</code> 之后，Redis Sentinel 就会被启动，如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/otjm7MZLJu94USV.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="3.png"
+	
+	
+></p>
+<p>从上图可以看出 Sentinel 只需配置监听主节点的信息，它会自动监听对应的从节点。</p>
+<h2 id="启动-sentinel-集群">启动 Sentinel 集群</h2>
+<p>上面我们演示了单个 Sentinel 的启动，但生产环境我们不会只启动一台 Sentinel，因为如果启动一台 Sentinel 假如它不幸宕机的话，就不能提供自动容灾的服务了，不符合我们高可用的宗旨，所以我们会在不同的物理机上启动多个 Sentinel 来组成 Sentinel 集群，来保证 Redis 服务的高可用。</p>
+<p>启动 Sentinel 集群的方法很简单，和上面启动单台的方式一样，我们只需要把多个 Sentinel 监听到一个主服务器节点，那么多个 Sentinel 就会自动发现彼此，并组成一个 Sentinel 集群。</p>
+<p>我们启动第二个 Sentinel 来试一下，执行结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>@iZ2ze0nc5n41zomzyqtksmZ:redis2<span class="o">]</span>$ ./src/redis-sentinel sentinel.conf
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.047 <span class="c1"># oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span>
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.047 <span class="c1"># Redis version=5.0.5, bits=64, commit=00000000, modified=0, pid=5547, just started</span>
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.047 <span class="c1"># Configuration loaded</span>
+</span></span><span class="line"><span class="cl">                _._                                                  
+</span></span><span class="line"><span class="cl">           _.-<span class="sb">``</span>__ <span class="s1">&#39;&#39;</span>-._                                             
+</span></span><span class="line"><span class="cl">      _.-<span class="sb">``</span>    <span class="sb">`</span>.  <span class="sb">`</span>_.  <span class="s1">&#39;&#39;</span>-._           Redis 5.0.5 <span class="o">(</span>00000000/0<span class="o">)</span> <span class="m">64</span> bit
+</span></span><span class="line"><span class="cl">  .-<span class="sb">``</span> .-<span class="sb">```</span>.  <span class="sb">```</span><span class="se">\/</span>    _.,_ <span class="s1">&#39;&#39;</span>-._                                   
+</span></span><span class="line"><span class="cl"> <span class="o">(</span>    <span class="s1">&#39;      ,       .-`  | `,    )     Running in sentinel mode
+</span></span></span><span class="line"><span class="cl"><span class="s1"> |`-._`-...-` __...-.``-._|&#39;</span><span class="sb">`</span> _.-<span class="s1">&#39;|     Port: 26377
+</span></span></span><span class="line"><span class="cl"><span class="s1"> |    `-._   `._    /     _.-&#39;</span>    <span class="p">|</span>     PID: <span class="m">5547</span>
+</span></span><span class="line"><span class="cl">  <span class="sb">`</span>-._    <span class="sb">`</span>-._  <span class="sb">`</span>-./  _.-<span class="s1">&#39;    _.-&#39;</span>                                   
+</span></span><span class="line"><span class="cl"> <span class="p">|</span><span class="sb">`</span>-._<span class="sb">`</span>-._    <span class="sb">`</span>-.__.-<span class="s1">&#39;    _.-&#39;</span>_.-<span class="s1">&#39;|                                  
+</span></span></span><span class="line"><span class="cl"><span class="s1"> |    `-._`-._        _.-&#39;</span>_.-<span class="s1">&#39;    |           http://redis.io        
+</span></span></span><span class="line"><span class="cl"><span class="s1">  `-._    `-._`-.__.-&#39;</span>_.-<span class="s1">&#39;    _.-&#39;</span>                                   
+</span></span><span class="line"><span class="cl"> <span class="p">|</span><span class="sb">`</span>-._<span class="sb">`</span>-._    <span class="sb">`</span>-.__.-<span class="s1">&#39;    _.-&#39;</span>_.-<span class="s1">&#39;|                                  
+</span></span></span><span class="line"><span class="cl"><span class="s1"> |    `-._`-._        _.-&#39;</span>_.-<span class="s1">&#39;    |                                  
+</span></span></span><span class="line"><span class="cl"><span class="s1">  `-._    `-._`-.__.-&#39;</span>_.-<span class="s1">&#39;    _.-&#39;</span>                                   
+</span></span><span class="line"><span class="cl">      <span class="sb">`</span>-._    <span class="sb">`</span>-.__.-<span class="s1">&#39;    _.-&#39;</span>                                       
+</span></span><span class="line"><span class="cl">          <span class="sb">`</span>-._        _.-<span class="s1">&#39;                                           
+</span></span></span><span class="line"><span class="cl"><span class="s1">              `-.__.-&#39;</span>                                               
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.049 <span class="c1"># WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.</span>
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.049 <span class="c1"># Sentinel ID is 6455f2f74614a71ce0a63398b2e48d6cd1cf0d06</span>
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.049 <span class="c1"># +monitor master mymaster 127.0.0.1 6379 quorum 1</span>
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.049 * +slave slave 127.0.0.1:6377 127.0.0.1 <span class="m">6377</span> @ mymaster 127.0.0.1 <span class="m">6379</span>
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.052 * +slave slave 127.0.0.1:6378 127.0.0.1 <span class="m">6378</span> @ mymaster 127.0.0.1 <span class="m">6379</span>
+</span></span><span class="line"><span class="cl">5547:X <span class="m">19</span> Feb <span class="m">2020</span> 20:29:30.345 * +sentinel sentinel 6455f2f74614a71ce0a63398b2e48d6cd1cf0d08 127.0.0.1 <span class="m">26379</span> @ mymaster 127.0.0.1 <span class="m">6379</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从以上启动命令可以看出，比单机模式多了最后一行发现其他 Sentinel 服务器的命令，说明这两个 Sentinel 已经组成一个集群了。</p>
+<p>Sentinel 集群示意图如下：</p>
+<p><img src="https://s2.loli.net/2021/12/14/YeOVNwt14UCMkT5.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="哨兵模式-多哨兵.png"
+	
+	
+></p>
+<p>一般情况下 Sentinel 集群的数量取大于 1 的奇数，例如 3、5、7、9，而 quorum 的配置要根据 Sentinel 的数量来发生变化，例如 Sentinel 是 3 台，那么对应的 quorum 最好是 2，如果 Sentinel 是 5 台，那么 quorum 最好是 3，它表示当有 3 台 Sentinel 都确认主节点下线了，就可以确定主节点真的下线了。</p>
+<p>与 quorum 参数相关的有两个概念：主观下线和客观下线。</p>
+<p>当 Sentinel 集群中，有一个 Sentinel 认为主服务器已经下线时，它会将这个主服务器标记为主观下线（Subjectively Down，SDOWN），然后询问集群中的其他 Sentinel，是否也认为该服务器已下线，当同意主服务器已下线的 Sentinel 数量达到 quorum 参数所指定的数量时，Sentinel 就会将相应的主服务器标记为客观下线（Objectively down，ODOWN），然后开始对其进行故障转移。</p>
+<h2 id="自动容灾测试">自动容灾测试</h2>
+<p>前面我们已经搭建了 Redis Sentinel，接下来我们就尝试一下自动容灾的功能，为了模拟故障我们先把主节点手动 kill 掉，执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>@iZ2ze0nc5n41zomzyqtksmZ:~<span class="o">]</span>$ ps -ef<span class="p">|</span>grep redis <span class="c1">#找到主节点的进程id</span>
+</span></span><span class="line"><span class="cl">root      <span class="m">5186</span>     <span class="m">1</span>  <span class="m">0</span> 16:54 ?        00:00:23 ./src/redis-server *:6377
+</span></span><span class="line"><span class="cl">root      <span class="m">5200</span>     <span class="m">1</span>  <span class="m">0</span> 16:56 ?        00:00:22 ./src/redis-server *:6378
+</span></span><span class="line"><span class="cl">root      <span class="m">5304</span>  <span class="m">5287</span>  <span class="m">0</span> 17:31 pts/2    00:00:00 redis-cli -a pwd654321
+</span></span><span class="line"><span class="cl">root      <span class="m">5395</span>  <span class="m">5255</span>  <span class="m">0</span> 18:26 pts/1    00:00:19 ./src/redis-sentinel *:26379 <span class="o">[</span>sentinel<span class="o">]</span>
+</span></span><span class="line"><span class="cl">root      <span class="m">5547</span>  <span class="m">5478</span>  <span class="m">0</span> 20:29 pts/4    00:00:02 ./src/redis-sentinel *:26377 <span class="o">[</span>sentinel<span class="o">]</span>
+</span></span><span class="line"><span class="cl">root      <span class="m">5551</span>  <span class="m">5517</span>  <span class="m">0</span> 20:29 pts/5    00:00:00 redis-cli -h 127.0.0.1 -p <span class="m">26377</span> -a pwd654321
+</span></span><span class="line"><span class="cl">root      <span class="m">5568</span>  <span class="m">5371</span>  <span class="m">0</span> 20:48 pts/0    00:00:00 grep --color<span class="o">=</span>auto redis
+</span></span><span class="line"><span class="cl">root     <span class="m">28517</span>     <span class="m">1</span>  <span class="m">0</span> Feb13 ?        00:15:33 ./src/redis-server *:6379
+</span></span><span class="line"><span class="cl"><span class="o">[</span>@iZ2ze0nc5n41zomzyqtksmZ:~<span class="o">]</span>$ <span class="nb">kill</span> -9 <span class="m">28517</span> <span class="c1">#关闭主节点服务</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个时候我们在连接上另一台 Redis 服务器，查看当前主从服务器信息，执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>@iZ2ze0nc5n41zomzyqtksmZ:~<span class="o">]</span>$ redis-cli -h 127.0.0.1 -p <span class="m">6377</span> -a pwd654321 2&gt;/dev/null
+</span></span><span class="line"><span class="cl">127.0.0.1:6377&gt; role
+</span></span><span class="line"><span class="cl">1<span class="o">)</span> <span class="s2">&#34;master&#34;</span>
+</span></span><span class="line"><span class="cl">2<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">770389</span>
+</span></span><span class="line"><span class="cl">3<span class="o">)</span> 1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;127.0.0.1&#34;</span>
+</span></span><span class="line"><span class="cl">      2<span class="o">)</span> <span class="s2">&#34;6378&#34;</span>
+</span></span><span class="line"><span class="cl">      3<span class="o">)</span> <span class="s2">&#34;770389&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出之前的从服务 6377 被提升为主服务器了，还剩下一台从服务 6378，而之前的主服务器 6379 被我们手动下线了，可以看出 Sentinel 已经完美的完成的它的故障自动转移的任务。</p>
+<h2 id="主服务竞选规则">主服务竞选规则</h2>
+<p>上面我们模拟了 Redis Sentinel 自动容灾恢复，那接下来我们来看一下，主服务器竞选的规则和相关设置项。</p>
+<h3 id="新主节点竞选优先级设置"><strong>新主节点竞选优先级设置</strong></h3>
+<p>我们可以 redis.conf 中的 replica-priority 选项来设置竞选新主节点的优先级，它的默认值是 100，它的最大值也是 100，这个值越小它的权重就越高，例如从节点 A 的 replica-priority 值为 100，从节点 B 的值为 50，从节点 C 的值为 5，那么在竞选时从节点 C 会作为新的主节点。</p>
+<h3 id="新主节点竞选规则"><strong>新主节点竞选规则</strong></h3>
+<p>新主节点的竞选会排除不符合条件的从节点，然后再剩余的从节点按照优先级来挑选。首先来说，存在以下条件的从节点会被排除：</p>
+<ol>
+<li>排除所有已经下线以及长时间没有回复心跳检测的疑似已下线从服务器；</li>
+<li>排除所有长时间没有与主服务器通信，数据状态过时的从服务器；</li>
+<li>排除所有优先级（replica-priority）为 0 的服务器。</li>
+</ol>
+<p>符合条件的从节点竞选顺序：</p>
+<ol>
+<li>优先级最高的从节点将会作为新主节点；</li>
+<li>优先级相等则判断复制偏移量，偏移量最大的从节点获胜；</li>
+<li>如果以上两个条件都相同，选择 Redis 运行时随机生成 ID 最小那个为新的主服务器。</li>
+</ol>
+<h3 id="旧主节点恢复上线"><strong>旧主节点恢复上线</strong></h3>
+<p>如果之前的旧主节点恢复上线，会作为从节点运行在主从服务器模式中。</p>
+<h2 id="哨兵工作原理">哨兵工作原理</h2>
+<p>哨兵的工作原理是这样的，首先每个 Sentinel 会以每秒钟 1 次的频率，向已知的主服务器、从服务器和以及其他 Sentinel 实例，发送一个 PING 命令。</p>
+<p>如果最后一次有效回复 PING 命令的时间超过 down-after-milliseconds 所配置的值（默认 30s），那么这个实例会被 Sentinel 标记为主观下线。</p>
+<p>如果一个主服务器被标记为主观下线，那么正在监视这个主服务器的所有 Sentinel 节点，要以每秒 1 次的频率确认 主服务器的确进入了主观下线状态。</p>
+<p>如果有足够数量（quorum 配置值）的 Sentinel 在指定的时间范围内同意这一判断，那么这个主服务器被标记为客观下线。此时所有的 Sentinel 会按照规则协商自动选出新的主节点。</p>
+<blockquote>
+<p>注意：一个有效的 PING 回复可以是：+PONG、-LOADING 或者 -MASTERDOWN。如果返回值非以上三种回复，或者在指定时间内没有回复 PING 命令， 那么 Sentinel 认为服务器返回的回复无效（non-valid)。</p>
+</blockquote>
+<h2 id="小结-1">小结</h2>
+<p>本文我们讲了主从模式的步骤，需要手动切换故障服务器的弊端，引出了 Sentinel 模式，可以实现监控和自动容灾，我们通过 Redis 提供的 Redis-Sentinel 来启动哨兵模式，当我们启动多个哨兵模式监视同一个主节点时，它们就会彼此发现形成一个新的高可用的 Sentinel 网络。同时我们讲了 Sentinel 的工作原理是通过 PING 命令来检查节点是否存活的，并通过配置项和复制偏移量 ID 来确定新主节点。</p>
+<h1 id="redis-集群模式">Redis 集群模式</h1>
+<p>Redis Cluster 是 Redis 3.0 版本推出的 Redis 集群方案，它将数据分布在不同的服务区上，以此来降低系统对单主节点的依赖，并且可以大大的提高 Redis 服务的读写性能。</p>
+<p>Redis 将所有的数据分为 16384 个 slots（槽），每个节点负责其中的一部分槽位，当有 Redis 客户端连接集群时，会得到一份集群的槽位配置信息，这样它就可以直接把请求命令发送给对应的节点进行处理。</p>
+<p>Redis Cluster 是无代理模式去中心化的运行模式，客户端发送的绝大数命令会直接交给相关节点执行，这样大部分情况请求命令无需转发，或仅转发一次的情况下就能完成请求与响应，所以集群单个节点的性能与单机 Redis 服务器的性能是非常接近的，因此在理论情况下，当水平扩展一倍的主节点就相当于请求处理的性能也提高了一倍，所以 Redis Cluster 的性能是非常高的。</p>
+<p>Redis Cluster 架构图如下所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/WyctFV8RAj7J1Tm.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="1.png"
+	
+	
+></p>
+<h2 id="搭建-redis-cluster">搭建 Redis Cluster</h2>
+<p>Redis Cluster 的搭建方式有两种，一种是使用 Redis 源码中提供的 create-cluster 工具快速的搭建 Redis 集群环境，另一种是配置文件的方式手动创建 Redis 集群环境。</p>
+<h3 id="快速搭建-redis-cluster"><strong>快速搭建 Redis Cluster</strong></h3>
+<p>create-cluster 工具在 utils/create-cluster 目录下，如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/OsN9qHtJiSyhR8j.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="2.png"
+	
+	
+></p>
+<p>使用命令 <code>./create-cluster start</code> 就可以急速创建一个 Redis 集群，执行如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ ./create-cluster start <span class="c1"># 创建集群</span>
+</span></span><span class="line"><span class="cl">Starting <span class="m">30001</span>
+</span></span><span class="line"><span class="cl">Starting <span class="m">30002</span>
+</span></span><span class="line"><span class="cl">Starting <span class="m">30003</span>
+</span></span><span class="line"><span class="cl">Starting <span class="m">30004</span>
+</span></span><span class="line"><span class="cl">Starting <span class="m">30005</span>
+</span></span><span class="line"><span class="cl">Starting <span class="m">30006</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来我们需要把以上创建的 6 个节点通过 create 命令组成一个集群，执行如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>@iZ2ze0nc5n41zomzyqtksmZ:create-cluster<span class="o">]</span>$ ./create-cluster create <span class="c1"># 组建集群</span>
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Performing <span class="nb">hash</span> slots allocation on <span class="m">6</span> nodes...
+</span></span><span class="line"><span class="cl">Master<span class="o">[</span>0<span class="o">]</span> -&gt; Slots <span class="m">0</span> - <span class="m">5460</span>
+</span></span><span class="line"><span class="cl">Master<span class="o">[</span>1<span class="o">]</span> -&gt; Slots <span class="m">5461</span> - <span class="m">10922</span>
+</span></span><span class="line"><span class="cl">Master<span class="o">[</span>2<span class="o">]</span> -&gt; Slots <span class="m">10923</span> - <span class="m">16383</span>
+</span></span><span class="line"><span class="cl">Adding replica 127.0.0.1:30005 to 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">Adding replica 127.0.0.1:30006 to 127.0.0.1:30002
+</span></span><span class="line"><span class="cl">Adding replica 127.0.0.1:30004 to 127.0.0.1:30003
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Trying to optimize slaves allocation <span class="k">for</span> anti-affinity
+</span></span><span class="line"><span class="cl"><span class="o">[</span>WARNING<span class="o">]</span> Some slaves are in the same host as their master
+</span></span><span class="line"><span class="cl">M: 445f2a86fe36d397613839d8cc1ae6702c976593 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>0-5460<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">M: 63bb14023c0bf58926738cbf857ea304bff8eb50 127.0.0.1:30002
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>5461-10922<span class="o">]</span> <span class="o">(</span><span class="m">5462</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">M: 864d4dfe32e3e0b81a64cec8b393bbd26a65cbcc 127.0.0.1:30003
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>10923-16383<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">S: 64828ab44566fc5ad656e831fd33de87be1387a0 127.0.0.1:30004
+</span></span><span class="line"><span class="cl">   replicates 445f2a86fe36d397613839d8cc1ae6702c976593
+</span></span><span class="line"><span class="cl">S: 0b17b00542706343583aa73149ec5ff63419f140 127.0.0.1:30005
+</span></span><span class="line"><span class="cl">   replicates 63bb14023c0bf58926738cbf857ea304bff8eb50
+</span></span><span class="line"><span class="cl">S: e35f06ca9b700073472d72001a39ea4dfcb541cd 127.0.0.1:30006
+</span></span><span class="line"><span class="cl">   replicates 864d4dfe32e3e0b81a64cec8b393bbd26a65cbcc
+</span></span><span class="line"><span class="cl">Can I <span class="nb">set</span> the above configuration? <span class="o">(</span><span class="nb">type</span> <span class="s1">&#39;yes&#39;</span> to accept<span class="o">)</span>: yes
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Nodes configuration updated
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Assign a different config epoch to each node
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Sending CLUSTER MEET messages to join the cluster
+</span></span><span class="line"><span class="cl">Waiting <span class="k">for</span> the cluster to join
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Performing Cluster Check <span class="o">(</span>using node 127.0.0.1:30001<span class="o">)</span>
+</span></span><span class="line"><span class="cl">M: 445f2a86fe36d397613839d8cc1ae6702c976593 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>0-5460<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">M: 864d4dfe32e3e0b81a64cec8b393bbd26a65cbcc 127.0.0.1:30003
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>10923-16383<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">S: e35f06ca9b700073472d72001a39ea4dfcb541cd 127.0.0.1:30006
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates 864d4dfe32e3e0b81a64cec8b393bbd26a65cbcc
+</span></span><span class="line"><span class="cl">S: 0b17b00542706343583aa73149ec5ff63419f140 127.0.0.1:30005
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates 63bb14023c0bf58926738cbf857ea304bff8eb50
+</span></span><span class="line"><span class="cl">M: 63bb14023c0bf58926738cbf857ea304bff8eb50 127.0.0.1:30002
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>5461-10922<span class="o">]</span> <span class="o">(</span><span class="m">5462</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">S: 64828ab44566fc5ad656e831fd33de87be1387a0 127.0.0.1:30004
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates 445f2a86fe36d397613839d8cc1ae6702c976593
+</span></span><span class="line"><span class="cl"><span class="o">[</span>OK<span class="o">]</span> All nodes agree about slots configuration.
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Check <span class="k">for</span> open slots...
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Check slots coverage...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>OK<span class="o">]</span> All <span class="m">16384</span> slots covered.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在执行的过程中会询问你是否通过把 30001、30002、30003 作为主节点，把 30004、30005、30006 作为它们的从节点，输入 <code>yes</code> 后会执行完成。</p>
+<p>我们可以先使用 redis-cli 连接到集群，命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ redis-cli -c -p <span class="m">30001</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在使用 nodes 命令来查看集群的节点信息，命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:30001&gt; cluster nodes
+</span></span><span class="line"><span class="cl">864d4dfe32e3e0b81a64cec8b393bbd26a65cbcc 127.0.0.1:30003@40003 master - <span class="m">0</span> <span class="m">1585125835078</span> <span class="m">3</span> connected 10923-16383
+</span></span><span class="line"><span class="cl">e35f06ca9b700073472d72001a39ea4dfcb541cd 127.0.0.1:30006@40006 slave 864d4dfe32e3e0b81a64cec8b393bbd26a65cbcc <span class="m">0</span> <span class="m">1585125835078</span> <span class="m">6</span> connected
+</span></span><span class="line"><span class="cl">0b17b00542706343583aa73149ec5ff63419f140 127.0.0.1:30005@40005 slave 63bb14023c0bf58926738cbf857ea304bff8eb50 <span class="m">0</span> <span class="m">1585125835078</span> <span class="m">5</span> connected
+</span></span><span class="line"><span class="cl">63bb14023c0bf58926738cbf857ea304bff8eb50 127.0.0.1:30002@40002 master - <span class="m">0</span> <span class="m">1585125834175</span> <span class="m">2</span> connected 5461-10922
+</span></span><span class="line"><span class="cl">445f2a86fe36d397613839d8cc1ae6702c976593 127.0.0.1:30001@40001 myself,master - <span class="m">0</span> <span class="m">1585125835000</span> <span class="m">1</span> connected 0-5460
+</span></span><span class="line"><span class="cl">64828ab44566fc5ad656e831fd33de87be1387a0 127.0.0.1:30004@40004 slave 445f2a86fe36d397613839d8cc1ae6702c976593 <span class="m">0</span> <span class="m">1585125835000</span> <span class="m">4</span> connected
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出 30001、30002、30003 都为主节点，30001 对应的槽位是 0~5460，30002 对应的槽位是 5461~10922，30003 对应的槽位是 10923~16383，总共有槽位 16384 个（0~16383）。</p>
+<p>create-cluster 搭建的方式虽然速度很快，但是该方式搭建的集群主从节点数量固定以及槽位分配模式固定，并且安装在同一台服务器上，所以只能用于测试环境。</p>
+<p>我们测试完成之后，可以<strong>使用以下命令，关闭并清理集群</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ ./create-cluster stop <span class="c1"># 关闭集群</span>
+</span></span><span class="line"><span class="cl">Stopping <span class="m">30001</span>
+</span></span><span class="line"><span class="cl">Stopping <span class="m">30002</span>
+</span></span><span class="line"><span class="cl">Stopping <span class="m">30003</span>
+</span></span><span class="line"><span class="cl">Stopping <span class="m">30004</span>
+</span></span><span class="line"><span class="cl">Stopping <span class="m">30005</span>
+</span></span><span class="line"><span class="cl">Stopping <span class="m">30006</span>
+</span></span><span class="line"><span class="cl">$ ./create-cluster clean <span class="c1"># 清理集群</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="手动搭建-redis-cluster"><strong>手动搭建 Redis Cluster</strong></h3>
+<p>由于 create-cluster 本身的限制，在实际生产环境中我们需要使用手动添加配置的方式搭建 Redis 集群，为此我们先要把 Redis 安装包复制到 node1 到 node6 文件中，因为我们要安装 6 个节点，3 主 3 从，如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/VrMS3qYoKy5Uzl1.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="3.png"
+	
+	
+></p>
+<p><img src="https://s2.loli.net/2021/12/14/NdKM7VyTYcZevJC.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="4.png"
+	
+	
+></p>
+<p>接下来我们进行配置并启动 Redis 集群。</p>
+<p><strong>1. 设置配置文件</strong></p>
+<p>我们需要修改每个节点内的 redis.conf 文件，设置 <code>cluster-enabled yes</code> 表示开启集群模式，并且修改各自的端口，我们继续使用 30001 到 30006，通过 <code>port 3000X</code> 设置。</p>
+<p><strong>2. 启动各个节点</strong></p>
+<p>redis.conf 配置好之后，我们就可以启动所有的节点了，命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /usr/local/soft/mycluster/node1 
+</span></span><span class="line"><span class="cl">./src/redis-server redis.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>3. 创建集群并分配槽位</strong></p>
+<p>之前我们已经启动了 6 个节点，但这些节点都在各自的集群之内并未互联互通，因此接下来我们需要把这些节点串连成一个集群，并为它们指定对应的槽位，执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">redis-cli --cluster create 127.0.0.1:30001 127.0.0.1:30002 127.0.0.1:30003 127.0.0.1:30004 127.0.0.1:30005 127.0.0.1:30006 --cluster-replicas <span class="m">1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中 create 后面跟多个节点，表示把这些节点作为整个集群的节点，而 cluster-replicas 表示给集群中的主节点指定从节点的数量，1 表示为每个主节点设置一个从节点。</p>
+<p>在执行了 create 命令之后，系统会为我们指定节点的角色和槽位分配计划，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">&gt;&gt;&gt; Performing <span class="nb">hash</span> slots allocation on <span class="m">6</span> nodes...
+</span></span><span class="line"><span class="cl">Master<span class="o">[</span>0<span class="o">]</span> -&gt; Slots <span class="m">0</span> - <span class="m">5460</span>
+</span></span><span class="line"><span class="cl">Master<span class="o">[</span>1<span class="o">]</span> -&gt; Slots <span class="m">5461</span> - <span class="m">10922</span>
+</span></span><span class="line"><span class="cl">Master<span class="o">[</span>2<span class="o">]</span> -&gt; Slots <span class="m">10923</span> - <span class="m">16383</span>
+</span></span><span class="line"><span class="cl">Adding replica 127.0.0.1:30005 to 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">Adding replica 127.0.0.1:30006 to 127.0.0.1:30002
+</span></span><span class="line"><span class="cl">Adding replica 127.0.0.1:30004 to 127.0.0.1:30003
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Trying to optimize slaves allocation <span class="k">for</span> anti-affinity
+</span></span><span class="line"><span class="cl"><span class="o">[</span>WARNING<span class="o">]</span> Some slaves are in the same host as their master
+</span></span><span class="line"><span class="cl">M: bdd1c913f87eacbdfeabc71befd0d06c913c891c 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>0-5460<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">M: bdd1c913f87eacbdfeabc71befd0d06c913c891c 127.0.0.1:30002
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>5461-10922<span class="o">]</span> <span class="o">(</span><span class="m">5462</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">M: bdd1c913f87eacbdfeabc71befd0d06c913c891c 127.0.0.1:30003
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>10923-16383<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">S: bdd1c913f87eacbdfeabc71befd0d06c913c891c 127.0.0.1:30004
+</span></span><span class="line"><span class="cl">   replicates bdd1c913f87eacbdfeabc71befd0d06c913c891c
+</span></span><span class="line"><span class="cl">S: bdd1c913f87eacbdfeabc71befd0d06c913c891c 127.0.0.1:30005
+</span></span><span class="line"><span class="cl">   replicates bdd1c913f87eacbdfeabc71befd0d06c913c891c
+</span></span><span class="line"><span class="cl">S: bdd1c913f87eacbdfeabc71befd0d06c913c891c 127.0.0.1:30006
+</span></span><span class="line"><span class="cl">   replicates bdd1c913f87eacbdfeabc71befd0d06c913c891c
+</span></span><span class="line"><span class="cl">Can I <span class="nb">set</span> the above configuration? <span class="o">(</span><span class="nb">type</span> <span class="s1">&#39;yes&#39;</span> to accept<span class="o">)</span>: 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从以上信息可以看出，Redis 打算把 30001、30002、30003 设置为主节点，并为他们分配的槽位，30001 对应的槽位是 0~5460，30002 对应的槽位是 5461~10922，30003 对应的槽位是 10923~16383，并且把 30005 设置为 30001 的从节点、30006 设置为 30002 的从节点、30004 设置为 30003 的从节点，我们只需要输入 <code>yes</code> 即可确认并执行分配，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Can I <span class="nb">set</span> the above configuration? <span class="o">(</span><span class="nb">type</span> <span class="s1">&#39;yes&#39;</span> to accept<span class="o">)</span>: yes
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Nodes configuration updated
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Assign a different config epoch to each node
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Sending CLUSTER MEET messages to join the cluster
+</span></span><span class="line"><span class="cl">Waiting <span class="k">for</span> the cluster to join
+</span></span><span class="line"><span class="cl">....
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Performing Cluster Check <span class="o">(</span>using node 127.0.0.1:30001<span class="o">)</span>
+</span></span><span class="line"><span class="cl">M: 887397e6fefe8ad19ea7569e99f5eb8a803e3785 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>0-5460<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">S: abec9f98f9c01208ba77346959bc35e8e274b6a3 127.0.0.1:30005
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates 887397e6fefe8ad19ea7569e99f5eb8a803e3785
+</span></span><span class="line"><span class="cl">S: 1a324d828430f61be6eaca7eb2a90728dd5049de 127.0.0.1:30004
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates f5958382af41d4e1f5b0217c1413fe19f390b55f
+</span></span><span class="line"><span class="cl">S: dc0702625743c48c75ea935c87813c4060547cef 127.0.0.1:30006
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates 3da35c40c43b457a113b539259f17e7ed616d13d
+</span></span><span class="line"><span class="cl">M: 3da35c40c43b457a113b539259f17e7ed616d13d 127.0.0.1:30002
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>5461-10922<span class="o">]</span> <span class="o">(</span><span class="m">5462</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">M: f5958382af41d4e1f5b0217c1413fe19f390b55f 127.0.0.1:30003
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>10923-16383<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>OK<span class="o">]</span> All nodes agree about slots configuration.
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Check <span class="k">for</span> open slots...
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Check slots coverage...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>OK<span class="o">]</span> All <span class="m">16384</span> slots covered.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>显示 OK 表示整个集群就已经成功启动了。</p>
+<p>接下来，我们使用 redis-cli 连接并测试一下集群的运行状态，代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ redis-cli -c -p <span class="m">30001</span> <span class="c1"># 连接到集群</span>
+</span></span><span class="line"><span class="cl">127.0.0.1:30001&gt; cluster info <span class="c1"># 查看集群信息</span>
+</span></span><span class="line"><span class="cl">cluster_state:ok <span class="c1"># 状态正常</span>
+</span></span><span class="line"><span class="cl">cluster_slots_assigned:16384 <span class="c1"># 槽位数</span>
+</span></span><span class="line"><span class="cl">cluster_slots_ok:16384 <span class="c1"># 正常的槽位数</span>
+</span></span><span class="line"><span class="cl">cluster_slots_pfail:0 
+</span></span><span class="line"><span class="cl">cluster_slots_fail:0
+</span></span><span class="line"><span class="cl">cluster_known_nodes:6 <span class="c1"># 集群的节点数</span>
+</span></span><span class="line"><span class="cl">cluster_size:3 <span class="c1"># 集群主节点数</span>
+</span></span><span class="line"><span class="cl">cluster_current_epoch:6
+</span></span><span class="line"><span class="cl">cluster_my_epoch:1
+</span></span><span class="line"><span class="cl">cluster_stats_messages_ping_sent:130
+</span></span><span class="line"><span class="cl">cluster_stats_messages_pong_sent:127
+</span></span><span class="line"><span class="cl">cluster_stats_messages_sent:257
+</span></span><span class="line"><span class="cl">cluster_stats_messages_ping_received:122
+</span></span><span class="line"><span class="cl">cluster_stats_messages_pong_received:130
+</span></span><span class="line"><span class="cl">cluster_stats_messages_meet_received:5
+</span></span><span class="line"><span class="cl">cluster_stats_messages_received:257
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>相关字段的说明已经标识在上述的代码中了，这里就不再赘述。</p>
+<h2 id="动态增删节点">动态增删节点</h2>
+<p>某些情况下，我们需要根据实际的业务情况，对已经在运行的集群进行动态的添加或删除节点，那我们就需要进行以下操作。</p>
+<h3 id="增加主节点"><strong>增加主节点</strong></h3>
+<p><strong>添加方式一：cluster meet</strong></p>
+<p>使用 <code>cluster meet ip:port</code> 命令就可以把一个节点加入到集群中，执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:30001&gt; cluster meet 127.0.0.1 <span class="m">30007</span>
+</span></span><span class="line"><span class="cl">OK
+</span></span><span class="line"><span class="cl">127.0.0.1:30001&gt; cluster nodes
+</span></span><span class="line"><span class="cl">dc0702625743c48c75ea935c87813c4060547cef 127.0.0.1:30006@40006 slave 3da35c40c43b457a113b539259f17e7ed616d13d <span class="m">0</span> <span class="m">1585142916000</span> <span class="m">6</span> connected
+</span></span><span class="line"><span class="cl">df0190853a53d8e078205d0e2fa56046f20362a7 127.0.0.1:30007@40007 master - <span class="m">0</span> <span class="m">1585142917740</span> <span class="m">0</span> connected
+</span></span><span class="line"><span class="cl">f5958382af41d4e1f5b0217c1413fe19f390b55f 127.0.0.1:30003@40003 master - <span class="m">0</span> <span class="m">1585142916738</span> <span class="m">3</span> connected 10923-16383
+</span></span><span class="line"><span class="cl">3da35c40c43b457a113b539259f17e7ed616d13d 127.0.0.1:30002@40002 master - <span class="m">0</span> <span class="m">1585142913000</span> <span class="m">2</span> connected 5461-10922
+</span></span><span class="line"><span class="cl">abec9f98f9c01208ba77346959bc35e8e274b6a3 127.0.0.1:30005@40005 slave 887397e6fefe8ad19ea7569e99f5eb8a803e3785 <span class="m">0</span> <span class="m">1585142917000</span> <span class="m">5</span> connected
+</span></span><span class="line"><span class="cl">887397e6fefe8ad19ea7569e99f5eb8a803e3785 127.0.0.1:30001@40001 myself,master - <span class="m">0</span> <span class="m">1585142915000</span> <span class="m">1</span> connected 0-5460
+</span></span><span class="line"><span class="cl">1a324d828430f61be6eaca7eb2a90728dd5049de 127.0.0.1:30004@40004 slave f5958382af41d4e1f5b0217c1413fe19f390b55f <span class="m">0</span> <span class="m">1585142916000</span> <span class="m">4</span> connected
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出端口为 30007 的节点并加入到集群中，并设置成了主节点。</p>
+<p><strong>添加方式二：add-node</strong></p>
+<p>使用 <code>redis-cli --cluster add-node 添加节点ip:port 集群某节点ip:port</code> 也可以把一个节点添加到集群中，执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ redis-cli --cluster add-node 127.0.0.1:30008 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Adding node 127.0.0.1:30008 to cluster 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Performing Cluster Check <span class="o">(</span>using node 127.0.0.1:30001<span class="o">)</span>
+</span></span><span class="line"><span class="cl">M: 887397e6fefe8ad19ea7569e99f5eb8a803e3785 127.0.0.1:30001
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>0-5460<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">S: dc0702625743c48c75ea935c87813c4060547cef 127.0.0.1:30006
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates 3da35c40c43b457a113b539259f17e7ed616d13d
+</span></span><span class="line"><span class="cl">M: df0190853a53d8e078205d0e2fa56046f20362a7 127.0.0.1:30007
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">M: f5958382af41d4e1f5b0217c1413fe19f390b55f 127.0.0.1:30003
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>10923-16383<span class="o">]</span> <span class="o">(</span><span class="m">5461</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">M: 1d09d26fd755298709efe60278457eaa09cefc26 127.0.0.1:30008
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">M: 3da35c40c43b457a113b539259f17e7ed616d13d 127.0.0.1:30002
+</span></span><span class="line"><span class="cl">   slots:<span class="o">[</span>5461-10922<span class="o">]</span> <span class="o">(</span><span class="m">5462</span> slots<span class="o">)</span> master
+</span></span><span class="line"><span class="cl">   <span class="m">1</span> additional replica<span class="o">(</span>s<span class="o">)</span>
+</span></span><span class="line"><span class="cl">S: abec9f98f9c01208ba77346959bc35e8e274b6a3 127.0.0.1:30005
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates 887397e6fefe8ad19ea7569e99f5eb8a803e3785
+</span></span><span class="line"><span class="cl">S: 1a324d828430f61be6eaca7eb2a90728dd5049de 127.0.0.1:30004
+</span></span><span class="line"><span class="cl">   slots: <span class="o">(</span><span class="m">0</span> slots<span class="o">)</span> slave
+</span></span><span class="line"><span class="cl">   replicates f5958382af41d4e1f5b0217c1413fe19f390b55f
+</span></span><span class="line"><span class="cl"><span class="o">[</span>OK<span class="o">]</span> All nodes agree about slots configuration.
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Check <span class="k">for</span> open slots...
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; Check slots coverage...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>OK<span class="o">]</span> All <span class="m">16384</span> slots covered.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>ERR<span class="o">]</span> Node 127.0.0.1:30008 is not empty. Either the node already knows other nodes <span class="o">(</span>check with CLUSTER NODES<span class="o">)</span> or contains some key in database 0.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从以上结果可以看出 30008 节点也被设置成了主节点。</p>
+<h3 id="添加从节点"><strong>添加从节点</strong></h3>
+<p>使用 <code>cluster replicate nodeId</code> 命令就可以把当前节点设置为目标节点的从节点，执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:30008&gt; cluster replicate df0190853a53d8e078205d0e2fa56046f20362a7
+</span></span><span class="line"><span class="cl">OK
+</span></span><span class="line"><span class="cl">127.0.0.1:30008&gt; cluster nodes
+</span></span><span class="line"><span class="cl">df0190853a53d8e078205d0e2fa56046f20362a7 127.0.0.1:30007@40007 master - <span class="m">0</span> <span class="m">1585147827000</span> <span class="m">0</span> connected
+</span></span><span class="line"><span class="cl">abec9f98f9c01208ba77346959bc35e8e274b6a3 127.0.0.1:30005@40005 slave 887397e6fefe8ad19ea7569e99f5eb8a803e3785 <span class="m">0</span> <span class="m">1585147827000</span> <span class="m">1</span> connected
+</span></span><span class="line"><span class="cl">1a324d828430f61be6eaca7eb2a90728dd5049de 127.0.0.1:30004@40004 slave f5958382af41d4e1f5b0217c1413fe19f390b55f <span class="m">0</span> <span class="m">1585147823000</span> <span class="m">3</span> connected
+</span></span><span class="line"><span class="cl">887397e6fefe8ad19ea7569e99f5eb8a803e3785 127.0.0.1:30001@40001 master - <span class="m">0</span> <span class="m">1585147826000</span> <span class="m">1</span> connected 0-5460
+</span></span><span class="line"><span class="cl">dc0702625743c48c75ea935c87813c4060547cef 127.0.0.1:30006@40006 slave 3da35c40c43b457a113b539259f17e7ed616d13d <span class="m">0</span> <span class="m">1585147826930</span> <span class="m">2</span> connected
+</span></span><span class="line"><span class="cl">f5958382af41d4e1f5b0217c1413fe19f390b55f 127.0.0.1:30003@40003 master - <span class="m">0</span> <span class="m">1585147826000</span> <span class="m">3</span> connected 10923-16383
+</span></span><span class="line"><span class="cl">1d09d26fd755298709efe60278457eaa09cefc26 127.0.0.1:30008@40008 myself,slave df0190853a53d8e078205d0e2fa56046f20362a7 <span class="m">0</span> <span class="m">1585147823000</span> <span class="m">7</span> connected
+</span></span><span class="line"><span class="cl">3da35c40c43b457a113b539259f17e7ed616d13d 127.0.0.1:30002@40002 master - <span class="m">0</span> <span class="m">1585147827933</span> <span class="m">2</span> connected 5461-10922
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出 30008 已经变为 30007 的从节点了。</p>
+<h3 id="删除节点"><strong>删除节点</strong></h3>
+<p>使用 <code>cluster forget nodeId</code> 命令就可以把一个节点从集群中移除。</p>
+<p>此命令和 meet 命令不同的时，删除节点需要把使用节点的 Id 进行删除，可以通过 <code>cluster nodes</code> 命令查看所有节点的 Id 信息，其中每一行的最前面的 40 位字母和数组的组合就是该节点的 Id，如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/14/GD2fygCYZIJx9sW.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="5.png"
+	
+	
+></p>
+<p>执行命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:30001&gt; cluster forget df0190853a53d8e078205d0e2fa56046f20362a7
+</span></span><span class="line"><span class="cl">OK
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时我们使用 <code>cluster nodes</code> 命令查看集群的所有节点信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">127.0.0.1:30001&gt; cluster nodes
+</span></span><span class="line"><span class="cl">dc0702625743c48c75ea935c87813c4060547cef 127.0.0.1:30006@40006 slave 3da35c40c43b457a113b539259f17e7ed616d13d <span class="m">0</span> <span class="m">1585143789940</span> <span class="m">6</span> connected
+</span></span><span class="line"><span class="cl">f5958382af41d4e1f5b0217c1413fe19f390b55f 127.0.0.1:30003@40003 master - <span class="m">0</span> <span class="m">1585143791000</span> <span class="m">3</span> connected 10923-16383
+</span></span><span class="line"><span class="cl">3da35c40c43b457a113b539259f17e7ed616d13d 127.0.0.1:30002@40002 master - <span class="m">0</span> <span class="m">1585143789000</span> <span class="m">2</span> connected 5461-10922
+</span></span><span class="line"><span class="cl">abec9f98f9c01208ba77346959bc35e8e274b6a3 127.0.0.1:30005@40005 slave 887397e6fefe8ad19ea7569e99f5eb8a803e3785 <span class="m">0</span> <span class="m">1585143789000</span> <span class="m">5</span> connected
+</span></span><span class="line"><span class="cl">887397e6fefe8ad19ea7569e99f5eb8a803e3785 127.0.0.1:30001@40001 myself,master - <span class="m">0</span> <span class="m">1585143786000</span> <span class="m">1</span> connected 0-5460
+</span></span><span class="line"><span class="cl">1a324d828430f61be6eaca7eb2a90728dd5049de 127.0.0.1:30004@40004 slave f5958382af41d4e1f5b0217c1413fe19f390b55f <span class="m">0</span> <span class="m">1585143791945</span> <span class="m">4</span> connected
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出之前的端口为 30007 的节点已经被我们成功的移除了。</p>
+<h2 id="小结-2">小结</h2>
+<p>本文讲了 Redis 集群的两种搭建方式：create-cluster start 和 cluster create，前一种方式虽然速度比较快，但它只能创建数量固定的主从节点，并且所有节点都在同一台服务器上，因此只能用于测试环境。我们还讲了 Redis 集群动态添加主、从节点和删除任意节点的功能。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    <section class="article-lastmod">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <span>
+            最后更新于 2022年3月17日 12:00 CST
+        </span>
+    </section></footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-contents--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-contents">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/posts/redis%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/23.jpg" loading="lazy" data-key="" data-hash="/23.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis常用数据类型</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/redis%E6%8C%81%E4%B9%85%E5%8C%96/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/26.jpg" loading="lazy" data-key="" data-hash="/26.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis持久化</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/redis%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/27.png" loading="lazy" data-key="" data-hash="/27.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis是如何执行的</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="has-image">
+    <a href="/posts/redis%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB%E5%92%8C%E7%9B%B8%E5%85%B3%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/25.png" loading="lazy" data-key="" data-hash="/25.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis问题汇总和相关解决方案</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+<div id="waline" class="waline-container"></div>
+<style>
+    .waline-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+    .waline-container .vcount {
+        color: var(--card-text-color-main);
+    }
+</style><script>
+    
+    new Waline({"dark":"html[data-scheme=\"dark\"]","el":"#waline","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili","https://cdn.jsdelivr.net/gh/walinejs/emojis/qq","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji","https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus"],"lang":"zh-CN","locale":{"admin":"Admin"},"requiredMeta":["name","email","url"],"serverURL":"https://blog-api-2w7xkqg6y-ahaomin.vercel.app/","visitor":true});
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ahao&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.10.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#主从同步的优点">主从同步的优点</a></li>
+    <li><a href="#开启主从同步">开启主从同步</a>
+      <ol>
+        <li><a href="#运行中设置从服务器"><strong>运行中设置从服务器</strong></a></li>
+        <li><a href="#启动时设置从服务器"><strong>启动时设置从服务器</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#数据同步">数据同步</a>
+      <ol>
+        <li><a href="#完整数据同步"><strong>完整数据同步</strong></a></li>
+        <li><a href="#部分数据同步"><strong>部分数据同步</strong></a></li>
+        <li><a href="#无盘数据同步"><strong>无盘数据同步</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#查询服务器的角色">查询服务器的角色</a>
+      <ol>
+        <li><a href="#主服务查看"><strong>主服务查看</strong></a></li>
+        <li><a href="#从服务器查看"><strong>从服务器查看</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#关闭主从同步">关闭主从同步</a></li>
+    <li><a href="#注意事项">注意事项</a>
+      <ol>
+        <li><a href="#数据一致性问题"><strong>数据一致性问题</strong></a></li>
+        <li><a href="#从服务器只读性"><strong>从服务器只读性</strong></a></li>
+        <li><a href="#复制命令的变化"><strong>复制命令的变化</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#小结">小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#redis-sentinel-搭建">Redis Sentinel 搭建</a></li>
+    <li><a href="#启动-sentinel-集群">启动 Sentinel 集群</a></li>
+    <li><a href="#自动容灾测试">自动容灾测试</a></li>
+    <li><a href="#主服务竞选规则">主服务竞选规则</a>
+      <ol>
+        <li><a href="#新主节点竞选优先级设置"><strong>新主节点竞选优先级设置</strong></a></li>
+        <li><a href="#新主节点竞选规则"><strong>新主节点竞选规则</strong></a></li>
+        <li><a href="#旧主节点恢复上线"><strong>旧主节点恢复上线</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#哨兵工作原理">哨兵工作原理</a></li>
+    <li><a href="#小结-1">小结</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#搭建-redis-cluster">搭建 Redis Cluster</a>
+      <ol>
+        <li><a href="#快速搭建-redis-cluster"><strong>快速搭建 Redis Cluster</strong></a></li>
+        <li><a href="#手动搭建-redis-cluster"><strong>手动搭建 Redis Cluster</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#动态增删节点">动态增删节点</a>
+      <ol>
+        <li><a href="#增加主节点"><strong>增加主节点</strong></a></li>
+        <li><a href="#添加从节点"><strong>添加从节点</strong></a></li>
+        <li><a href="#删除节点"><strong>删除节点</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#小结-2">小结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
