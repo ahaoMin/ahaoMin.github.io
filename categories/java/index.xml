@@ -23871,7 +23871,7 @@ JVM：栈内存、堆内存
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;ArrayList&amp;lt;?&amp;gt; 表示可以使用任意的泛型类型对象，这样 test 方法具备通用性了。&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;ArrayList&lt;!-- raw HTML omitted --&gt; 表示可以使用任意的泛型类型对象，这样 test 方法具备通用性了。&lt;/p&gt;
 &lt;h3 id=&#34;泛型上限和下限&#34;&gt;泛型上限和下限&lt;/h3&gt;
 &lt;p&gt;上限：表示实例化时具体的数据类型，可以是上限类型的子类或者是上限类型本身，用 extends 表示。&lt;/p&gt;
 &lt;p&gt;下限：表示实例化时具体的数据类型，可以是下限类型的父类或者是下限类型本身，用 super 表示。&lt;/p&gt;
