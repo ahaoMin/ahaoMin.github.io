@@ -34,7 +34,8 @@ InnoDB 的索引模型 在InnoDB中，表都是根据主键顺序以索引的形
 每一个索引在InnoDB里面对应一棵B&#43;树。
 假设，我们有一个主键列为ID的表，表中有字段k，并且在k上有索引。
 这个表的建表语句是：
-1 2 3 4 5  mysql&amp;gt; create table T( id int primary key, k int not null, name varchar(16), index (k))engine=InnoDB;   表中R1~R5的(ID,k)值分别为(100,1)、(200,2)、(300,3)、(500,5)和(600,6)，两棵树的示例示意图如下。'><title>深入浅出索引</title>
+1 2 3 4 5 mysql&amp;gt; create table T( id int primary key, k int not null, name varchar(16), index (k))engine=InnoDB; 表中R1~R5的(ID,k)值分别为(100,1)、(200,2)、(300,3)、(500,5)和(600,6)，两棵树的示例示意图如下。
+从图中不难看出，根据叶子节点的内容，索引类型分为主键索引和非主键索引。'><title>深入浅出索引</title>
 
 <link rel='canonical' href='https://ahao.ink/posts/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E7%B4%A2%E5%BC%95/'>
 
@@ -72,10 +73,11 @@ InnoDB 的索引模型 在InnoDB中，表都是根据主键顺序以索引的形
 每一个索引在InnoDB里面对应一棵B&#43;树。
 假设，我们有一个主键列为ID的表，表中有字段k，并且在k上有索引。
 这个表的建表语句是：
-1 2 3 4 5  mysql&amp;gt; create table T( id int primary key, k int not null, name varchar(16), index (k))engine=InnoDB;   表中R1~R5的(ID,k)值分别为(100,1)、(200,2)、(300,3)、(500,5)和(600,6)，两棵树的示例示意图如下。'>
+1 2 3 4 5 mysql&amp;gt; create table T( id int primary key, k int not null, name varchar(16), index (k))engine=InnoDB; 表中R1~R5的(ID,k)值分别为(100,1)、(200,2)、(300,3)、(500,5)和(600,6)，两棵树的示例示意图如下。
+从图中不难看出，根据叶子节点的内容，索引类型分为主键索引和非主键索引。'>
 <meta property='og:url' content='https://ahao.ink/posts/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E7%B4%A2%E5%BC%95/'>
 <meta property='og:site_name' content='ahao&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-06-28T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-18T08:28:31&#43;00:00'/><meta property='og:image' content='https://ahao.ink/4.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-06-28T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-06-07T01:16:52&#43;00:00'/><meta property='og:image' content='https://ahao.ink/4.jpg' />
 <meta name="twitter:title" content="深入浅出索引">
 <meta name="twitter:description" content="索引 提到数据库索引，大家都不陌生。比如某一个SQL查询比较慢，分析完原因之后，你可能就会说“给某个字段加个索引吧”之类的解决方案。但到底什么是索引，索引又是如何工作的呢？
 一句话简单来说，索引的出现其实就是为了提高数据查询的效率，就像书的目录一样。一本500页的书，如果你想快速找到其中的某一个知识点，在不借助目录的情况下，那我估计你可得找一会儿。同样，对于数据库的表而言，索引其实就是它的“目录”。
@@ -110,7 +112,8 @@ InnoDB 的索引模型 在InnoDB中，表都是根据主键顺序以索引的形
 每一个索引在InnoDB里面对应一棵B&#43;树。
 假设，我们有一个主键列为ID的表，表中有字段k，并且在k上有索引。
 这个表的建表语句是：
-1 2 3 4 5  mysql&amp;gt; create table T( id int primary key, k int not null, name varchar(16), index (k))engine=InnoDB;   表中R1~R5的(ID,k)值分别为(100,1)、(200,2)、(300,3)、(500,5)和(600,6)，两棵树的示例示意图如下。"><meta name="twitter:card" content="summary_large_image">
+1 2 3 4 5 mysql&amp;gt; create table T( id int primary key, k int not null, name varchar(16), index (k))engine=InnoDB; 表中R1~R5的(ID,k)值分别为(100,1)、(200,2)、(300,3)、(500,5)和(600,6)，两棵树的示例示意图如下。
+从图中不难看出，根据叶子节点的内容，索引类型分为主键索引和非主键索引。"><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://ahao.ink/4.jpg' />
     <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
 
@@ -708,7 +711,7 @@ InnoDB 的索引模型 在InnoDB中，表都是根据主键顺序以索引的形
 
 
         <span>
-            最后更新于 2022年3月18日 08:28 UTC
+            最后更新于 2022年6月7日 01:16 UTC
         </span>
     </section></footer>
 

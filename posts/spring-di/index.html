@@ -11,10 +11,12 @@ IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的�
 对象中肯定会有一些其余对象的引用，那么这种引用就称呼为对象的依赖，而 DI 依赖注入其实 是 IOC 设计思想的一种表现形式。
 对于 这种属性依赖，我们无需手动赋予，也是讲赋值的动作交给 Spring ，那么这种操作就是 依赖注入。
 依赖注入方式：
- 第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。  那么，本章节先带大家体验下 xml 方式实现依赖注入。
+第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。 那么，本章节先带大家体验下 xml 方式实现依赖注入。
 工程实现 搭建动作介绍
- 创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件  创建工程 导入依赖 省略
-可以参考之前创建过的IoC工程'><title>Spring DI</title>
+创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件 创建工程 导入依赖 省略
+可以参考之前创建过的IoC工程
+java 代码
+创建 Servcie 的接口和接口的实现类，代码如下：'><title>Spring DI</title>
 
 <link rel='canonical' href='https://ahao.ink/posts/spring-di/'>
 
@@ -29,13 +31,15 @@ IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的�
 对象中肯定会有一些其余对象的引用，那么这种引用就称呼为对象的依赖，而 DI 依赖注入其实 是 IOC 设计思想的一种表现形式。
 对于 这种属性依赖，我们无需手动赋予，也是讲赋值的动作交给 Spring ，那么这种操作就是 依赖注入。
 依赖注入方式：
- 第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。  那么，本章节先带大家体验下 xml 方式实现依赖注入。
+第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。 那么，本章节先带大家体验下 xml 方式实现依赖注入。
 工程实现 搭建动作介绍
- 创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件  创建工程 导入依赖 省略
-可以参考之前创建过的IoC工程'>
+创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件 创建工程 导入依赖 省略
+可以参考之前创建过的IoC工程
+java 代码
+创建 Servcie 的接口和接口的实现类，代码如下：'>
 <meta property='og:url' content='https://ahao.ink/posts/spring-di/'>
 <meta property='og:site_name' content='ahao&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-04-08T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-18T08:28:31&#43;00:00'/><meta property='og:image' content='https://ahao.ink/29.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-04-08T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-06-07T01:16:52&#43;00:00'/><meta property='og:image' content='https://ahao.ink/29.jpg' />
 <meta name="twitter:title" content="Spring DI">
 <meta name="twitter:description" content="Spring DI（依赖注入）之XML配置 前言 在Spring控制反转，我们详细讲解了 控制反转，也就是对 bean 做实例化的部分。而我们知道 ，Spring 的核心功能是两个：控制反转 和 依赖注入。
 那么控制反转我们已经讲过，而依赖注入是什么呢？
@@ -47,10 +51,12 @@ IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的�
 对象中肯定会有一些其余对象的引用，那么这种引用就称呼为对象的依赖，而 DI 依赖注入其实 是 IOC 设计思想的一种表现形式。
 对于 这种属性依赖，我们无需手动赋予，也是讲赋值的动作交给 Spring ，那么这种操作就是 依赖注入。
 依赖注入方式：
- 第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。  那么，本章节先带大家体验下 xml 方式实现依赖注入。
+第一种方式是通过 xml 配置的方式实现； 第二种方式是在属性或者方法上使用注解的方式实现。 那么，本章节先带大家体验下 xml 方式实现依赖注入。
 工程实现 搭建动作介绍
- 创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件  创建工程 导入依赖 省略
-可以参考之前创建过的IoC工程"><meta name="twitter:card" content="summary_large_image">
+创建一个 maven 工程 导入Spring 使用的依赖 编写业务层的 Service 和持久层的 Dao java 类 编写 Spring 的配置文件 创建工程 导入依赖 省略
+可以参考之前创建过的IoC工程
+java 代码
+创建 Servcie 的接口和接口的实现类，代码如下："><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://ahao.ink/29.jpg' />
     <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
 
@@ -597,7 +603,7 @@ IOC 控制反转是将对象实例化的动作交由了 Spring 框架， 它的�
 
 
         <span>
-            最后更新于 2022年3月18日 08:28 UTC
+            最后更新于 2022年6月7日 01:16 UTC
         </span>
     </section></footer>
 

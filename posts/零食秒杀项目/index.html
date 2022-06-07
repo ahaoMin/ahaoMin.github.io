@@ -23,8 +23,9 @@ dao包：数据访问层
 service包：存放业务层
 entity包：存放实体类
 前端结构 项目部署 后端部署 打包项目(跳过所写的测试代码)：
-1  mvn clean package -Dmaven.test.skip=true   写一个start.sh文件来启动项目：
-1 2 3  pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp;   赋予start.'><title>零食秒杀项目</title>
+1 mvn clean package -Dmaven.test.skip=true 写一个start.sh文件来启动项目：
+1 2 3 pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp; 赋予start.sh执行权限并执行：
+1 2 chmod -R 777 startup.'><title>零食秒杀项目</title>
 
 <link rel='canonical' href='https://ahao.ink/posts/%E9%9B%B6%E9%A3%9F%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE/'>
 
@@ -51,11 +52,12 @@ dao包：数据访问层
 service包：存放业务层
 entity包：存放实体类
 前端结构 项目部署 后端部署 打包项目(跳过所写的测试代码)：
-1  mvn clean package -Dmaven.test.skip=true   写一个start.sh文件来启动项目：
-1 2 3  pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp;   赋予start.'>
+1 mvn clean package -Dmaven.test.skip=true 写一个start.sh文件来启动项目：
+1 2 3 pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp; 赋予start.sh执行权限并执行：
+1 2 chmod -R 777 startup.'>
 <meta property='og:url' content='https://ahao.ink/posts/%E9%9B%B6%E9%A3%9F%E7%A7%92%E6%9D%80%E9%A1%B9%E7%9B%AE/'>
 <meta property='og:site_name' content='ahao&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-03-08T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-03-18T08:28:31&#43;00:00'/><meta property='og:image' content='https://ahao.ink/3.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-03-08T13:36:41&#43;00:00'/><meta property='article:modified_time' content='2022-06-07T01:16:52&#43;00:00'/><meta property='og:image' content='https://ahao.ink/3.jpg' />
 <meta name="twitter:title" content="零食秒杀项目">
 <meta name="twitter:description" content="项目架构 后端项目部署在应用服务器上，这里用的是Tomcat
 数据层用的Mybatis框架用来进行数据访问
@@ -79,8 +81,9 @@ dao包：数据访问层
 service包：存放业务层
 entity包：存放实体类
 前端结构 项目部署 后端部署 打包项目(跳过所写的测试代码)：
-1  mvn clean package -Dmaven.test.skip=true   写一个start.sh文件来启动项目：
-1 2 3  pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp;   赋予start."><meta name="twitter:card" content="summary_large_image">
+1 mvn clean package -Dmaven.test.skip=true 写一个start.sh文件来启动项目：
+1 2 3 pid=`ps aux | grep seckill | grep -v grep | awk &amp;#39;{print $2}&amp;#39;` kill -9 $pid nohup java -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -jar seckill-0.0.1-SNAPSHOT.jar --spring.profiles.active=test &amp;amp; 赋予start.sh执行权限并执行：
+1 2 chmod -R 777 startup."><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://ahao.ink/3.jpg' />
     <link rel="shortcut icon" href="img/avatar_hua8acc2063f8134c9d13980a8a63800c2_11114_300x0_resize_box_3.png" />
 
@@ -869,7 +872,7 @@ entity包：存放实体类
 
 
         <span>
-            最后更新于 2022年3月18日 08:28 UTC
+            最后更新于 2022年6月7日 01:16 UTC
         </span>
     </section></footer>
 
